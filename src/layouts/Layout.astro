@@ -1,0 +1,33 @@
+---
+import '../styles/global.css';
+import SmoothScroll from '../components/SmoothScroll.jsx';
+import Navbar from '../components/Navbar.jsx';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = 'Evand Aprilliano', 
+  description = 'Portofolio interaktif dengan WebGL, Three.js, dan animasi GSAP.' 
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id" class="dark scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-[#0d0d0d] text-neutral-100 antialiased selection:bg-amber-300 selection:text-neutral-950 overflow-x-hidden min-h-screen">
+    <SmoothScroll client:only="react">
+      <Navbar client:load />
+      <slot />
+    </SmoothScroll>
+  </body>
+</html>
