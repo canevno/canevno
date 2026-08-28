@@ -19,14 +19,14 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       const words = textRef.current.querySelectorAll('.scroll-word');
 
-      // ScrollRevealText ala Framer (Word-by-word)
+      // AnimasiOpacity (JS tidak lagi mengunci warna teks/background)
       gsap.fromTo(
         words,
         { 
-          color: '#a3a3a3', // Warna awal: abu-abu netral padat
+          opacity: 0.25,
         },
         {
-          color: '#141414', // Warna akhir: hitam pekat
+          opacity: 1,
           stagger: 0.1,
           ease: 'power1.inOut',
           scrollTrigger: {
@@ -39,25 +39,25 @@ export default function Hero() {
       );
     }, containerRef);
 
-    return () => ctx.revert(); // Menghapus instance animasi GSAP secara sempurna
+    return () => ctx.revert();
   }, []);
 
   return (
     <section 
       ref={containerRef}
       id="home"
-      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-4 sm:px-8 md:px-12 pb-12 md:pb-16 bg-[#f5f5f3]"
+      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-400"
     >
-      <div ref={textRef} className="text-left flex flex-col gap-0.5 sm:gap-1 max-w-xl">
+      <div ref={textRef} className="text-left flex flex-col gap-0.5 max-w-xl lg:max-w-2xl">
         {lines.map((line, lineIndex) => (
           <h1 
             key={lineIndex} 
-            className="text-xs sm:text-sm md:text-base font-bold leading-snug tracking-tight flex flex-wrap gap-x-[0.3em]"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-tight tracking-tight flex flex-wrap gap-x-[0.25em]"
           >
             {line.split(" ").map((word, wordIndex) => (
               <span 
                 key={wordIndex} 
-                className="scroll-word inline-block will-change-[color]"
+                className="scroll-word inline-block will-change-[opacity]"
               >
                 {word}
               </span>

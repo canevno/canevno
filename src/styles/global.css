@@ -1,62 +1,68 @@
 @import "tailwindcss";
 @import "lenis/dist/lenis.css";
 
-/* RESET & LATAR BELAKANG PUTIH BERSIH MURNI */
+@font-face {
+  font-family: 'Fluctuation Light';
+  src: url('./asset/fonts/Fluctuation Lt.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@theme {
+  --font-sans: 'Fluctuation Light', sans-serif;
+  --font-fluctuation: 'Fluctuation Light', sans-serif;
+}
+
+/* VARIABEL WARNA TEMA GLOBAL & ANIMASI HERO */
+:root {
+  --bg-primary: #ffffff;
+  --text-primary: #0a0a0a;
+  
+  /* Animasi Teks Hero Light Mode: Putih Samar -> Abu-abu -> Hitam Pekat */
+  --hero-text-start: #e5e5e5;
+  --hero-text-mid: #737373;
+  --hero-text-end: #0a0a0a;
+}
+
+.dark {
+  --bg-primary: #0a0a0a;
+  --text-primary: #ffffff;
+  
+  /* Animasi Teks Hero Dark Mode: Abu-abu Samar -> Abu Terang -> Putih Pekat */
+  --hero-text-start: #525252;
+  --hero-text-mid: #a3a3a3;
+  --hero-text-end: #ffffff;
+}
+
+/* RESET & BASE STYLES SELURUH HALAMAN */
 html,
 body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  background-color: #ffffff;
-  color: #0a0a0a;
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* INTEGRASI LENIS SMOOTH SCROLL */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
+/* INTEGRASI LENIS */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
-}
-
-/* SCROLLBAR MINIMALIS LIGHT MODE */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #ffffff;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d4d4d4;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a3a3a3;
-}
-
-/* SELEKSI TEKS HIGH CONTRAST */
+/* SELEKSI TEKS */
 ::selection {
   background-color: #0a0a0a;
   color: #ffffff;
+}
+.dark ::selection {
+  background-color: #ffffff;
+  color: #0a0a0a;
 }
