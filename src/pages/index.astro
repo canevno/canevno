@@ -8,87 +8,101 @@ import '../styles/global.css';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portofolio | Creative Developer</title>
+    <title>Portofolio | Evand Aprilliano</title>
   </head>
-  <body class="bg-[#f5f5f3] text-[#141414] overflow-x-hidden selection:bg-[#141414] selection:text-[#f5f5f3]">
+  <body class="bg-[#f5f5f3] text-[#141414] overflow-x-hidden selection:bg-[#141414] selection:text-white">
     
+    <!-- NAVBAR -->
     <Navbar client:load />
 
-    <main class="relative w-full">
+    <!-- MAIN CONTENT (BERURUTAN TANPA DUPLIKASI) -->
+    <main class="relative w-full bg-[#f5f5f3]">
+      
+      {/* 1. HERO SECTION */}
       <Hero client:load />
 
-      {/* SECTION: ABOUT */}
+      {/* 2. ABOUT SECTION */}
       <section 
         id="about" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 bg-[#f5f5f3] scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">About</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#141414]">About</h2>
           <p class="text-neutral-600 text-sm md:text-base">
-            Area untuk menampilkan profil, latar belakang, dan keahlian teknis Anda.
+            Area profil dan latar belakang.
           </p>
         </div>
       </section>
 
-      {/* SECTION: PROJECT */}
+      {/* 3. PROJECT SECTION */}
       <section 
         id="project" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 bg-[#f5f5f3] scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Project</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#141414]">Project</h2>
           <p class="text-neutral-600 text-sm md:text-base">
-            Area tempat menampilkan galeri karya dan studi kasus proyek terbaik.
+            Galeri karya dan proyek utama.
           </p>
         </div>
       </section>
 
-      {/* SECTION: ORGANISASI */}
+      {/* 4. ORGANISASI SECTION */}
       <section 
         id="organisasi" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 bg-[#f5f5f3] scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Organisasi</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#141414]">Organisasi</h2>
           <p class="text-neutral-600 text-sm md:text-base">
-            Area rekam jejak kepemimpinan dan pengalaman berorganisasi.
+            Pengalaman dan rekam jejak organisasi.
           </p>
         </div>
       </section>
 
-      {/* SECTION: GALLERY */}
+      {/* 5. GALLERY SECTION */}
       <section 
         id="gallery" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 bg-[#f5f5f3] scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Gallery</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#141414]">Gallery</h2>
           <p class="text-neutral-600 text-sm md:text-base">
-            Dokumentasi visual, momen penting, dan proyek kreatif lainnya.
+            Dokumentasi visual dan momen penting.
           </p>
         </div>
       </section>
 
-      {/* SECTION: CONTACT */}
+      {/* 6. CONTACT SECTION (SELESAI DI SINI) */}
       <section 
         id="contact" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 bg-[#f5f5f3] scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Contact</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#141414]">Contact</h2>
           <p class="text-neutral-600 text-sm md:text-base">
-            Formulir interaktif atau tautan sosial media untuk komunikasi langsung.
+            Formulir atau kontak sosial media.
           </p>
         </div>
       </section>
+
     </main>
 
+    <!-- FOOTER PENUTUP HALAMAN -->
+    <footer class="w-full py-8 text-center text-xs text-neutral-500 border-t border-neutral-300/60 bg-[#f5f5f3]">
+      <p>© {new Date().getFullYear()} Evand Aprilliano. All rights reserved.</p>
+    </footer>
+
+    <!-- SCRIPT SMOOTH SCROLL LENIS & GSAP SINKRON -->
     <script>
       import Lenis from 'lenis';
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
       gsap.registerPlugin(ScrollTrigger);
+
+      // Bersihkan instance ScrollTrigger lama saat Astro me-reload
+      ScrollTrigger.getAll().forEach(t => t.kill());
 
       const lenis = new Lenis({
         duration: 1.2,

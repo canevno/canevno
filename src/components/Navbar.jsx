@@ -118,12 +118,12 @@ export default function Navbar() {
         ref={navRef}
         className="fixed top-4 md:top-5 left-1/2 -translate-x-1/2 z-50 max-w-[calc(100vw-20px)] md:max-w-fit transform-gpu"
       >
-        <nav className="flex items-center gap-1 md:gap-1.5 p-1 bg-[#2b2b2b]/65 backdrop-blur-md border border-[#444444]/60 rounded-[6px] shadow-2xl transition-transform duration-700 ease-out hover:scale-[1.015]">
+        <nav className="flex items-center gap-1 md:gap-1.5 p-1 bg-[#2b2b2b]/65 backdrop-blur-md border border-[#444444]/60 rounded-[6px]  transition-transform duration-700 ease-out hover:scale-[1.015]">
           
           {/* LOGO */}
           <a 
             href="#" 
-            className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#171717] text-white rounded-[4px] font-bold text-[10px] md:text-xs hover:bg-[#101010] transition-colors border border-black/50 tracking-wider shadow-inner shrink-0"
+            className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#171717] text-white rounded-[4px] font-bold text-[10px] md:text-xs hover:bg-[#101010] transition-colors border border-black/50 tracking-wider shrink-0"
           >
             EVAND
           </a>
@@ -154,7 +154,7 @@ export default function Navbar() {
             <div ref={iconMenuRef} className="hidden items-center justify-center origin-center">
               <button 
                 aria-label="Menu"
-                className="h-6 md:h-7.5 w-7 md:w-8 flex items-center justify-center text-white bg-[#3a3a3a]/90 rounded-[3px] border border-neutral-300/90 shadow-sm"
+                className="h-6 md:h-7.5 w-7 md:w-8 flex items-center justify-center text-white bg-[#3a3a3a]/90 rounded-[3px] border border-neutral-300/90 "
               >
                 <svg className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
@@ -166,7 +166,7 @@ export default function Navbar() {
           {/* CONTACT ME */}
           <a
             href="#contact"
-            className="flex items-center justify-center h-7 md:h-8.5 px-2.5 md:px-3.5 bg-[#ececec] hover:bg-white text-[#121212] font-semibold text-[10px] md:text-xs rounded-[4px] transition-all duration-300 active:scale-95 shadow-md whitespace-nowrap shrink-0"
+            className="flex items-center justify-center h-7 md:h-8.5 px-2.5 md:px-3.5 bg-[#ececec] hover:bg-white text-[#121212] font-semibold text-[10px] md:text-xs rounded-[4px] transition-all duration-300 active:scale-95  whitespace-nowrap shrink-0"
           >
             Contact Me
           </a>
@@ -175,7 +175,7 @@ export default function Navbar() {
 
       {/* TOMBOL BACK TO TOP (BOTTOM RIGHT) */}
       <div
-        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#2b2b2b]/65 backdrop-blur-md border border-[#444444]/60 rounded-[6px] shadow-2xl transition-all duration-500 hover:scale-[1.03] ${
+        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#2b2b2b]/65 backdrop-blur-md border border-[#444444]/60 rounded-[6px] transition-all duration-500 hover:scale-[1.03] ${
           showBackToTop 
             ? 'opacity-100 translate-y-0 pointer-events-auto' 
             : 'opacity-0 translate-y-3 pointer-events-none'
@@ -184,7 +184,7 @@ export default function Navbar() {
         <button
           onClick={scrollToTop}
           aria-label="Back to Top"
-          className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#ececec] hover:bg-white text-[#121212] rounded-[4px] transition-all duration-300 active:scale-90 shadow-md group"
+          className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#ececec] hover:bg-white text-[#121212] rounded-[4px] transition-all duration-300 active:scale-90 "
         >
           <svg 
             className="w-3.5 h-3.5 md:w-4 md:h-4 stroke-[#121212] fill-none transition-transform duration-300 group-hover:-translate-y-0.5" 
