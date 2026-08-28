@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* WAJIB UNTUK TAILWIND v4: Mengaktifkan mode dark berbasis class '.dark' */
+@variant dark (&:where(.dark, .dark *));
 @import "lenis/dist/lenis.css";
 
 @font-face {

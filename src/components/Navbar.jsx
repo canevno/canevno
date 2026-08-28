@@ -12,7 +12,7 @@ export default function Navbar() {
   const iconMenuRef = useRef(null);
   const isCollapsedRef = useRef(false);
 
-  // Inisialisasi Deteksi & Toggle Tema
+  // Inisialisasi Deteksi & Toggle Tema Global
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -143,18 +143,18 @@ export default function Navbar() {
       <header className="fixed top-4 md:top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
         <nav 
           ref={navRef}
-          className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-white/75 dark:bg-[#2b2b2b]/65 backdrop-blur-md border border-neutral-300/80 dark:border-[#444444]/60 rounded-[6px] transition-all duration-300 ease-out hover:scale-[1.015] shadow-sm dark:shadow-none"
+          className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-[#2b2b2b]/75 backdrop-blur-md border border-[#444444]/60 rounded-[6px] transition-all duration-300 ease-out hover:scale-[1.015]"
         >
           {/* LOGO */}
           <a 
             href="#" 
-            className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#171717] dark:bg-white text-white dark:text-[#171717] rounded-[4px] font-bold text-[10px] md:text-xs hover:bg-[#101010] dark:hover:bg-neutral-200 transition-colors border border-black/50 dark:border-white/50 tracking-wider shrink-0"
+            className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-white text-[#171717] hover:bg-neutral-200 rounded-[4px] font-bold text-[10px] md:text-xs transition-colors border border-white/50 tracking-wider shrink-0"
           >
             EVAND
           </a>
 
           {/* CONTAINER TENGAH */}
-          <div className="flex items-center justify-center bg-neutral-200/60 dark:bg-[#202020]/50 p-0.5 rounded-[4px] border border-neutral-300/80 dark:border-[#3d3d3d]/50 overflow-hidden min-w-[32px] md:min-w-[36px] min-h-[28px] md:min-h-[32px]">
+          <div className="flex items-center justify-center bg-[#202020]/60 p-0.5 rounded-[4px] border border-[#3d3d3d]/50 overflow-hidden min-w-[32px] md:min-w-[36px] min-h-[28px] md:min-h-[32px]">
             {/* Menu Lengkap */}
             <div ref={fullMenuRef} className="flex items-center gap-0.5 origin-center">
               {navItems.map((item) => {
@@ -165,8 +165,8 @@ export default function Navbar() {
                     onClick={() => setActiveTab(item.id)}
                     className={`h-6 md:h-7.5 px-1.5 md:px-3 text-[10px] md:text-xs font-medium rounded-[3px] transition-all duration-300 whitespace-nowrap ${
                       isActive
-                        ? 'text-neutral-900 border border-neutral-400/80 bg-white shadow-sm dark:text-white dark:border-neutral-300/90 dark:bg-[#3a3a3a]/90'
-                        : 'text-neutral-600 border border-transparent hover:text-neutral-900 dark:text-neutral-300 dark:border-neutral-700/40 dark:bg-[#2d2d2d]/60 dark:hover:border-neutral-500 dark:hover:text-white'
+                        ? 'text-white border border-neutral-300/90 bg-[#3a3a3a]/90'
+                        : 'text-neutral-300 border border-neutral-700/40 bg-[#2d2d2d]/60 hover:border-neutral-500 hover:text-white'
                     }`}
                   >
                     {item.label}
@@ -179,7 +179,7 @@ export default function Navbar() {
             <div ref={iconMenuRef} className="hidden items-center justify-center origin-center">
               <button 
                 aria-label="Menu"
-                className="h-6 md:h-7.5 w-7 md:w-8 flex items-center justify-center text-neutral-800 dark:text-white bg-white dark:bg-[#3a3a3a]/90 rounded-[3px] border border-neutral-300 dark:border-neutral-300/90"
+                className="h-6 md:h-7.5 w-7 md:w-8 flex items-center justify-center text-white bg-[#3a3a3a]/90 rounded-[3px] border border-neutral-300/90"
               >
                 <svg className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
@@ -192,7 +192,7 @@ export default function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-neutral-200/80 hover:bg-neutral-300/80 dark:bg-[#3d3d3d]/80 dark:hover:bg-[#4a4a4a] text-neutral-800 dark:text-white rounded-[4px] transition-all duration-300 shrink-0"
+            className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#3d3d3d]/80 hover:bg-[#4a4a4a] text-white rounded-[4px] transition-all duration-300 shrink-0 cursor-pointer"
           >
             {isDark ? (
               /* Sun Icon */
@@ -211,7 +211,7 @@ export default function Navbar() {
           {/* CONTACT ME */}
           <a
             href="#contact"
-            className="flex items-center justify-center h-7 md:h-8.5 px-2.5 md:px-3.5 bg-[#171717] hover:bg-black text-white dark:bg-[#ececec] dark:hover:bg-white dark:text-[#121212] font-semibold text-[10px] md:text-xs rounded-[4px] transition-all duration-300 active:scale-95 whitespace-nowrap shrink-0"
+            className="flex items-center justify-center h-7 md:h-8.5 px-2.5 md:px-3.5 bg-[#ececec] hover:bg-white text-[#121212] font-semibold text-[10px] md:text-xs rounded-[4px] transition-all duration-300 active:scale-95 whitespace-nowrap shrink-0"
           >
             Contact Me
           </a>
@@ -220,7 +220,7 @@ export default function Navbar() {
 
       {/* TOMBOL BACK TO TOP (BOTTOM RIGHT) */}
       <div
-        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-white/75 dark:bg-[#2b2b2b]/65 backdrop-blur-md border border-neutral-300/80 dark:border-[#444444]/60 rounded-[6px] transition-all duration-500 hover:scale-[1.03] ${
+        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#2b2b2b]/75 backdrop-blur-md border border-[#444444]/60 rounded-[6px] transition-all duration-500 hover:scale-[1.03] ${
           showBackToTop 
             ? 'opacity-100 translate-y-0 pointer-events-auto' 
             : 'opacity-0 translate-y-3 pointer-events-none'
@@ -229,7 +229,7 @@ export default function Navbar() {
         <button
           onClick={scrollToTop}
           aria-label="Back to Top"
-          className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#171717] hover:bg-black text-white dark:bg-[#ececec] dark:hover:bg-white dark:text-[#121212] rounded-[4px] transition-all duration-300 active:scale-90"
+          className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#ececec] hover:bg-white text-[#121212] rounded-[4px] transition-all duration-300 active:scale-90 cursor-pointer"
         >
           <svg 
             className="w-3.5 h-3.5 md:w-4 md:h-4 stroke-current fill-none transition-transform duration-300 group-hover:-translate-y-0.5" 

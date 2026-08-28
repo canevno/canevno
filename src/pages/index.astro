@@ -4,13 +4,14 @@ import Hero from '../components/Hero';
 import '../styles/global.css';
 ---
 
+<!DOCTYPE html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portofolio | Evand Aprilliano</title>
 
-    {/* SCRIPT ANTI-FOUC: Mencegah efek layar berkedip saat pertama dimuat */}
+    <!-- ANTI-FOUC SCRIPT: Menyesuaikan kelas dark sebelum DOM selesai di-render -->
     <script is:inline>
       const theme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -38,7 +39,7 @@ import '../styles/global.css';
         class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#0a0a0a] dark:text-white transition-colors duration-400">About</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">About</h2>
           <p class="text-neutral-600 dark:text-neutral-400 text-sm md:text-base transition-colors duration-400">
             Area profil dan latar belakang.
           </p>
@@ -51,7 +52,7 @@ import '../styles/global.css';
         class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#0a0a0a] dark:text-white transition-colors duration-400">Project</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Project</h2>
           <p class="text-neutral-600 dark:text-neutral-400 text-sm md:text-base transition-colors duration-400">
             Galeri karya dan proyek utama.
           </p>
@@ -64,7 +65,7 @@ import '../styles/global.css';
         class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#0a0a0a] dark:text-white transition-colors duration-400">Organisasi</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Organisasi</h2>
           <p class="text-neutral-600 dark:text-neutral-400 text-sm md:text-base transition-colors duration-400">
             Pengalaman dan rekam jejak organisasi.
           </p>
@@ -77,7 +78,7 @@ import '../styles/global.css';
         class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#0a0a0a] dark:text-white transition-colors duration-400">Gallery</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Gallery</h2>
           <p class="text-neutral-600 dark:text-neutral-400 text-sm md:text-base transition-colors duration-400">
             Dokumentasi visual dan momen penting.
           </p>
@@ -90,7 +91,7 @@ import '../styles/global.css';
         class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-[#0a0a0a] dark:text-white transition-colors duration-400">Contact</h2>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Contact</h2>
           <p class="text-neutral-600 dark:text-neutral-400 text-sm md:text-base transition-colors duration-400">
             Formulir atau kontak sosial media.
           </p>

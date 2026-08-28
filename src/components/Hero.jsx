@@ -16,37 +16,83 @@ export default function Hero() {
   ];
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    let ctx;
+
+    const buildAnimation = () => {
+      // Hapus inline style warna GSAP yang lama agar tidak mengunci warna tema baru
+      if (ctx) ctx.revert();
+
+      const isDark = document.documentElement.classList.contains('dark');
       const words = textRef.current.querySelectorAll('.scroll-word');
 
-      // AnimasiOpacity (JS tidak lagi mengunci warna teks/background)
-      gsap.fromTo(
-        words,
-        { 
-          opacity: 0.25,
-        },
-        {
-          opacity: 1,
-          stagger: 0.1,
-          ease: 'power1.inOut',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: '+=60%',
-            scrub: 0.8,
-          },
+      ctx = gsap.context(() => {
+        if (isDark) {
+          // DARK MODE (2 SEGMEN): Abu-abu (#525252) -> Putih (#ffffff)
+          gsap.fromTo(
+            words,
+            { color: '#525252' },
+            {
+              color: '#ffffff',
+              stagger: 0.1,
+              ease: 'power1.inOut',
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: 'top top',
+                end: '+=60%',
+                scrub: 0.8,
+              },
+            }
+          );
+        } else {
+          // LIGHT MODE (3 SEGMEN): Putih Samar (#e5e5e5) -> Abu-abu (#737373) -> Hitam (#0a0a0a)
+          gsap.fromTo(
+            words,
+            { color: '#e5e5e5' },
+            {
+              keyframes: [
+                { color: '#737373', duration: 0.5 },
+                { color: '#0a0a0a', duration: 0.5 }
+              ],
+              stagger: 0.1,
+              ease: 'power1.inOut',
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: 'top top',
+                end: '+=60%',
+                scrub: 0.8,
+              },
+            }
+          );
         }
-      );
-    }, containerRef);
+      }, containerRef);
+    };
 
-    return () => ctx.revert();
+    // Jalankan inisialisasi animasi pertama kali
+    buildAnimation();
+
+    // Deteksi perubahan kelas 'dark' pada tag <html> secara realtime
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          buildAnimation();
+          ScrollTrigger.refresh();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+
+    return () => {
+      observer.disconnect();
+      if (ctx) ctx.revert();
+    };
   }, []);
 
   return (
     <section 
       ref={containerRef}
       id="home"
-      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-400"
+      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-white dark:bg-[#0a0a0a] transition-colors duration-400"
     >
       <div ref={textRef} className="text-left flex flex-col gap-0.5 max-w-xl lg:max-w-2xl">
         {lines.map((line, lineIndex) => (
@@ -57,7 +103,7 @@ export default function Hero() {
             {line.split(" ").map((word, wordIndex) => (
               <span 
                 key={wordIndex} 
-                className="scroll-word inline-block will-change-[opacity]"
+                className="scroll-word inline-block will-change-[color]"
               >
                 {word}
               </span>
