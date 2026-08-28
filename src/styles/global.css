@@ -1,21 +1,21 @@
 @import "tailwindcss";
 @import "lenis/dist/lenis.css";
 
-/* 1. RESET & ATURAN DASAR LAYAR */
+/* RESET & LATAR BELAKANG PUTIH BERSIH MURNI */
 html,
 body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  background-color: #0d0d0d;
-  color: #f3f3f3;
+  background-color: #ffffff;
+  color: #0a0a0a;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 2. INTEGRASI LENIS SMOOTH SCROLL */
+/* INTEGRASI LENIS SMOOTH SCROLL */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -37,26 +37,26 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* 3. KUSTOMISASI SCROLLBAR SLEEK DARK TONE */
+/* SCROLLBAR MINIMALIS LIGHT MODE */
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d0d0d;
+  background: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #282828;
-  border-radius: 4px;
+  background: #d4d4d4;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444444;
+  background: #a3a3a3;
 }
 
-/* 4. HIGHLIGHT SELEKSI TEKS */
+/* SELEKSI TEKS HIGH CONTRAST */
 ::selection {
-  background-color: #ffffff;
-  color: #0d0d0d;
+  background-color: #0a0a0a;
+  color: #ffffff;
 }

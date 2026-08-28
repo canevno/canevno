@@ -10,23 +10,21 @@ import '../styles/global.css';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portofolio | Creative Developer</title>
   </head>
-  <body class="bg-[#0d0d0d] text-[#f3f3f3] overflow-x-hidden selection:bg-white selection:text-[#0d0d0d]">
+  <body class="bg-[#f5f5f3] text-[#141414] overflow-x-hidden selection:bg-[#141414] selection:text-[#f5f5f3]">
     
-    {/* Dynamic Navbar */}
     <Navbar client:load />
 
-    {/* Main Content Sections */}
-   <main class="relative w-full">
+    <main class="relative w-full">
       <Hero client:load />
 
       {/* SECTION: ABOUT */}
       <section 
         id="about" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 border-t border-neutral-900 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
           <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">About</h2>
-          <p class="text-neutral-400 text-sm md:text-base">
+          <p class="text-neutral-600 text-sm md:text-base">
             Area untuk menampilkan profil, latar belakang, dan keahlian teknis Anda.
           </p>
         </div>
@@ -35,11 +33,11 @@ import '../styles/global.css';
       {/* SECTION: PROJECT */}
       <section 
         id="project" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 border-t border-neutral-900 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
           <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Project</h2>
-          <p class="text-neutral-400 text-sm md:text-base">
+          <p class="text-neutral-600 text-sm md:text-base">
             Area tempat menampilkan galeri karya dan studi kasus proyek terbaik.
           </p>
         </div>
@@ -48,11 +46,11 @@ import '../styles/global.css';
       {/* SECTION: ORGANISASI */}
       <section 
         id="organisasi" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 border-t border-neutral-900 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
           <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Organisasi</h2>
-          <p class="text-neutral-400 text-sm md:text-base">
+          <p class="text-neutral-600 text-sm md:text-base">
             Area rekam jejak kepemimpinan dan pengalaman berorganisasi.
           </p>
         </div>
@@ -61,11 +59,11 @@ import '../styles/global.css';
       {/* SECTION: GALLERY */}
       <section 
         id="gallery" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 border-t border-neutral-900 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
           <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Gallery</h2>
-          <p class="text-neutral-400 text-sm md:text-base">
+          <p class="text-neutral-600 text-sm md:text-base">
             Dokumentasi visual, momen penting, dan proyek kreatif lainnya.
           </p>
         </div>
@@ -74,18 +72,17 @@ import '../styles/global.css';
       {/* SECTION: CONTACT */}
       <section 
         id="contact" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 border-t border-neutral-900 scroll-mt-16"
+        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
       >
         <div class="max-w-4xl text-center">
           <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Contact</h2>
-          <p class="text-neutral-400 text-sm md:text-base">
+          <p class="text-neutral-600 text-sm md:text-base">
             Formulir interaktif atau tautan sosial media untuk komunikasi langsung.
           </p>
         </div>
       </section>
     </main>
 
-    {/* Inisialisasi Lenis Smooth Scroll + GSAP Sync */}
     <script>
       import Lenis from 'lenis';
       import gsap from 'gsap';
@@ -93,14 +90,12 @@ import '../styles/global.css';
 
       gsap.registerPlugin(ScrollTrigger);
 
-      // 1. Setup Smooth Scroll Engine
       const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
       });
 
-      // 2. Kunci Sinkronisasi Lenis dengan ScrollTrigger GSAP
       lenis.on('scroll', ScrollTrigger.update);
 
       gsap.ticker.add((time) => {

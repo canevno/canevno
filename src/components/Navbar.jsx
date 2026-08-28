@@ -125,7 +125,7 @@ export default function Navbar() {
             href="#" 
             className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#171717] text-white rounded-[4px] font-bold text-[10px] md:text-xs hover:bg-[#101010] transition-colors border border-black/50 tracking-wider shadow-inner shrink-0"
           >
-            LOGO
+            EVAND
           </a>
 
           {/* CONTAINER TENGAH */}
