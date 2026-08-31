@@ -20,11 +20,13 @@ export default function Hero() {
   useEffect(() => {
     let ctx;
 
+    // 1. ANIMASI SCROLL TEKS GSAP
     const buildAnimation = () => {
       if (ctx) ctx.revert();
 
       const isDark = document.documentElement.classList.contains('dark');
-      const words = textRef.current.querySelectorAll('.scroll-word');
+      const words = textRef.current?.querySelectorAll('.scroll-word');
+      if (!words || words.length === 0) return;
 
       ctx = gsap.context(() => {
         if (isDark) {
@@ -46,7 +48,7 @@ export default function Hero() {
         } else {
           gsap.fromTo(
             words,
-            { color: '#a3a3a3' },
+            { color: '#898A8C' },
             {
               keyframes: [
                 { color: '#545A5B', duration: 0.5 },
@@ -64,6 +66,8 @@ export default function Hero() {
           );
         }
       }, containerRef);
+
+      ScrollTrigger.refresh();
     };
 
     buildAnimation();
@@ -72,16 +76,91 @@ export default function Hero() {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'class') {
           buildAnimation();
-          ScrollTrigger.refresh();
         }
       });
     });
 
     observer.observe(document.documentElement, { attributes: true });
 
+    // 2. ANIMASI KURSOR DISTORSI GRID ("DISTORTED / BROKEN GLASS")
+    const handleMouseMove = (e) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const slats = container.querySelectorAll('.slat-item');
+      const mouseX = e.clientX;
+      const radius = 240; // Jangkauan efek distorsi
+
+      slats.forEach((slat, index) => {
+        const rect = slat.getBoundingClientRect();
+        const slatCenter = rect.left + rect.width / 2;
+        const dist = Math.abs(mouseX - slatCenter);
+
+        if (dist < radius) {
+          const intensity = Math.pow(1 - dist / radius, 2);
+          
+          // Pola zig-zag & acak untuk mensimulasikan grid retak / patah
+          const dirX = index % 2 === 0 ? 1 : -1;
+          const dirY = index % 3 === 0 ? 1.2 : -0.8;
+
+          gsap.to(slat, {
+            x: dirX * intensity * 18,              // Bergeser horizontal (garis grid patah)
+            y: dirY * intensity * 15,              // Terangkat / Anjlok acak
+            skewY: dirX * intensity * 6,           // Distorsi sudut kemiringan kaca
+            scaleX: 1 - intensity * 0.12,          // Menyempit
+            scaleY: 1 + intensity * 0.08,          // Memanjang
+            filter: `brightness(${1 + intensity * 0.9}) contrast(${1 + intensity * 0.5})`,
+            duration: 0.2,
+            ease: 'power3.out',
+            overwrite: 'auto'
+          });
+        } else {
+          // Kembalikan kisi ke posisi rapi secara halus
+          gsap.to(slat, {
+            x: 0,
+            y: 0,
+            skewY: 0,
+            scaleX: 1,
+            scaleY: 1,
+            filter: 'brightness(1) contrast(1)',
+            duration: 0.7,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        }
+      });
+    };
+
+    const handleMouseLeave = () => {
+      const slats = containerRef.current?.querySelectorAll('.slat-item');
+      if (!slats) return;
+
+      gsap.to(slats, {
+        x: 0,
+        y: 0,
+        skewY: 0,
+        scaleX: 1,
+        scaleY: 1,
+        filter: 'brightness(1) contrast(1)',
+        duration: 0.8,
+        ease: 'power2.out',
+        overwrite: 'auto'
+      });
+    };
+
+    const containerEl = containerRef.current;
+    if (containerEl) {
+      containerEl.addEventListener('mousemove', handleMouseMove);
+      containerEl.addEventListener('mouseleave', handleMouseLeave);
+    }
+
     return () => {
       observer.disconnect();
       if (ctx) ctx.revert();
+      if (containerEl) {
+        containerEl.removeEventListener('mousemove', handleMouseMove);
+        containerEl.removeEventListener('mouseleave', handleMouseLeave);
+      }
     };
   }, []);
 
@@ -89,9 +168,9 @@ export default function Hero() {
     <section 
       ref={containerRef}
       id="home"
-      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-white dark:bg-[#06151E] transition-colors duration-400 overflow-hidden"
+      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
     >
-      {/* BACKGROUND REFRACTED GLASS (z-0 agar berada di atas bg section) */}
+      {/* PRISMATIC REFRACTED GLASS BACKGROUND WITH GLITCH/BROKEN GRID */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         <div className="flex w-full h-full">
           {Array.from({ length: slatCount }).map((_, index) => {
@@ -101,35 +180,35 @@ export default function Hero() {
             return (
               <div
                 key={index}
-                className="flex-1 h-full relative border-r border-[#898A8C]/20 dark:border-[#898A8C]/15"
+                className="slat-item flex-1 h-full relative border-r border-[#898A8C]/25 dark:border-white/10 will-change-transform"
                 style={{
                   background: `linear-gradient(
                     180deg,
                     transparent 0%,
                     transparent ${25 + waveOffset}%,
-                    rgba(84, 90, 91, 0.45) ${42 + waveOffset}%,
-                    rgba(137, 138, 140, 0.85) ${50 + waveOffset}%,
-                    rgba(84, 90, 91, 0.45) ${58 + waveOffset}%,
+                    rgba(84, 90, 91, 0.35) ${42 + waveOffset}%,
+                    rgba(137, 138, 140, 0.65) ${50 + waveOffset}%,
+                    rgba(84, 90, 91, 0.35) ${58 + waveOffset}%,
                     transparent ${75 + waveOffset}%,
                     transparent 100%
                   )`
                 }}
               >
-                {/* Highlight Kiri */}
-                <div className="absolute inset-y-0 left-0 w-[1px] bg-gradient-to-b from-transparent via-[#898A8C]/50 to-transparent" />
+                {/* Highlight Kiri Kaca */}
+                <div className="absolute inset-y-0 left-0 w-[1px] bg-gradient-to-b from-transparent via-[#898A8C]/35 dark:via-white/30 to-transparent" />
                 
-                {/* Bayangan Kanan */}
-                <div className="absolute inset-y-0 right-0 w-[2px] bg-black/20 dark:bg-black/70" />
+                {/* Bayangan Kanan Kaca */}
+                <div className="absolute inset-y-0 right-0 w-[2px] bg-black/15 dark:bg-black/90" />
               </div>
             );
           })}
         </div>
 
-        {/* Shadow Overlay Bawah */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/95 dark:to-[#06151E] transition-colors duration-400" />
+        {/* Gradasi Bawah: Memudar Mulus ke Base Color */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent via-[#EBECEE]/80 dark:via-black/70 to-[#EBECEE] dark:to-black transition-colors duration-400" />
       </div>
 
-      {/* GSAP TEXT CONTENT (z-10 di atas background) */}
+      {/* GSAP TEXT CONTENT */}
       <div ref={textRef} className="text-left flex flex-col gap-0.5 max-w-xl lg:max-w-2xl relative z-10">
         {lines.map((line, lineIndex) => (
           <h1 
