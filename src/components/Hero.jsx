@@ -9,9 +9,9 @@ export default function Hero() {
   const textRef = useRef(null);
 
   const lines = [
-    "Saya Evand Aprilliano",
-    "Pelajar Aktif Di Sekolah Kejuruan",
-    "Memiliki Minat Tinggi di Bidang",
+    "I'm Evand Aprilliano",
+    "Active student in software engineering",
+    "Have high anticipation In the field",
     "Front-end Development"
   ];
 
@@ -47,12 +47,12 @@ export default function Hero() {
           // LIGHT MODE (3 SEGMEN): Putih Samar (#e5e5e5) -> Abu-abu (#737373) -> Hitam (#0a0a0a)
           gsap.fromTo(
             words,
-            { color: '#e5e5e5' },
-            {
-              keyframes: [
-                { color: '#737373', duration: 0.5 },
-                { color: '#0a0a0a', duration: 0.5 }
-              ],
+         { color: '#a3a3a3' },
+        {
+            keyframes: [
+            { color: '#525252', duration: 0.5 },
+            { color: '#0a0a0a', duration: 0.5 }
+            ],
               stagger: 0.1,
               ease: 'power1.inOut',
               scrollTrigger: {

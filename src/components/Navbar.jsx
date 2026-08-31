@@ -150,7 +150,7 @@ export default function Navbar() {
             href="#" 
             className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-white text-[#171717] hover:bg-neutral-200 rounded-[4px] font-bold text-[10px] md:text-xs transition-colors border border-white/50 tracking-wider shrink-0"
           >
-            EVAND
+            CANEVNO
           </a>
 
           {/* CONTAINER TENGAH */}
