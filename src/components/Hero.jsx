@@ -82,14 +82,14 @@ export default function Hero() {
 
     observer.observe(document.documentElement, { attributes: true });
 
-    // 2. ANIMASI KURSOR DISTORSI GRID ("DISTORTED / BROKEN GLASS")
+    // 2. ANIMASI KURSOR: 3D ACCORDION / FOLDING GLASS (GRID DIAM & TERLIPAT)
     const handleMouseMove = (e) => {
       const container = containerRef.current;
       if (!container) return;
 
       const slats = container.querySelectorAll('.slat-item');
       const mouseX = e.clientX;
-      const radius = 240; // Jangkauan efek distorsi
+      const radius = 220; // Jangkauan kursor untuk efek lipatan
 
       slats.forEach((slat, index) => {
         const rect = slat.getBoundingClientRect();
@@ -99,31 +99,29 @@ export default function Hero() {
         if (dist < radius) {
           const intensity = Math.pow(1 - dist / radius, 2);
           
-          // Pola zig-zag & acak untuk mensimulasikan grid retak / patah
-          const dirX = index % 2 === 0 ? 1 : -1;
-          const dirY = index % 3 === 0 ? 1.2 : -0.8;
+          // Arah lipatan bergantian selang-seling (accordion fold effect)
+          const foldDirection = index % 2 === 0 ? 1 : -1;
+          const foldAngle = foldDirection * intensity * 40; // Sudut terlipat hingga 40 derajat
 
           gsap.to(slat, {
-            x: dirX * intensity * 18,              // Bergeser horizontal (garis grid patah)
-            y: dirY * intensity * 15,              // Terangkat / Anjlok acak
-            skewY: dirX * intensity * 6,           // Distorsi sudut kemiringan kaca
-            scaleX: 1 - intensity * 0.12,          // Menyempit
-            scaleY: 1 + intensity * 0.08,          // Memanjang
-            filter: `brightness(${1 + intensity * 0.9}) contrast(${1 + intensity * 0.5})`,
-            duration: 0.2,
-            ease: 'power3.out',
+            x: 0, // Posisi grid tetap diam
+            y: 0,
+            rotateY: foldAngle, // Kaca terlipat miring pada sumbu 3D
+            transformPerspective: 700,
+            transformOrigin: 'center center',
+            filter: `brightness(${1 + intensity * 0.7})`,
+            duration: 0.3,
+            ease: 'power2.out',
             overwrite: 'auto'
           });
         } else {
-          // Kembalikan kisi ke posisi rapi secara halus
+          // Kembalikan ke posisi semula (rata)
           gsap.to(slat, {
             x: 0,
             y: 0,
-            skewY: 0,
-            scaleX: 1,
-            scaleY: 1,
-            filter: 'brightness(1) contrast(1)',
-            duration: 0.7,
+            rotateY: 0,
+            filter: 'brightness(1)',
+            duration: 0.6,
             ease: 'power2.out',
             overwrite: 'auto'
           });
@@ -138,10 +136,8 @@ export default function Hero() {
       gsap.to(slats, {
         x: 0,
         y: 0,
-        skewY: 0,
-        scaleX: 1,
-        scaleY: 1,
-        filter: 'brightness(1) contrast(1)',
+        rotateY: 0,
+        filter: 'brightness(1)',
         duration: 0.8,
         ease: 'power2.out',
         overwrite: 'auto'
@@ -170,7 +166,7 @@ export default function Hero() {
       id="home"
       className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
     >
-      {/* PRISMATIC REFRACTED GLASS BACKGROUND WITH GLITCH/BROKEN GRID */}
+      {/* PRISMATIC REFRACTED GLASS BACKGROUND WITH FOLDING GRID */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         <div className="flex w-full h-full">
           {Array.from({ length: slatCount }).map((_, index) => {
@@ -204,7 +200,7 @@ export default function Hero() {
           })}
         </div>
 
-        {/* Gradasi Bawah: Memudar Mulus ke Base Color */}
+        {/* Gradasi Bawah */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent via-[#EBECEE]/80 dark:via-black/70 to-[#EBECEE] dark:to-black transition-colors duration-400" />
       </div>
 
