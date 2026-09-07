@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -7,6 +7,8 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Hero() {
   const containerRef = useRef(null);
   const textRef = useRef(null);
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const lines = [
     "I'm Evand Aprilliano",
@@ -15,12 +17,24 @@ export default function Hero() {
     "Front-end Development"
   ];
 
-  const slatCount = 30;
+  const toggleAudio = () => {
+    const nextState = !isPlaying;
+    setIsPlaying(nextState);
+
+    if (audioRef.current) {
+      if (nextState) {
+        audioRef.current.play().catch(() => {
+          console.warn("File audio belum ada/tidak ditemukan, menjalankan mode pratinjau animasi.");
+        });
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  };
 
   useEffect(() => {
     let ctx;
 
-    // 1. ANIMASI SCROLL TEKS GSAP
     const buildAnimation = () => {
       if (ctx) ctx.revert();
 
@@ -82,81 +96,9 @@ export default function Hero() {
 
     observer.observe(document.documentElement, { attributes: true });
 
-    // 2. ANIMASI KURSOR: 3D ACCORDION / FOLDING GLASS (GRID DIAM & TERLIPAT)
-    const handleMouseMove = (e) => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const slats = container.querySelectorAll('.slat-item');
-      const mouseX = e.clientX;
-      const radius = 220; // Jangkauan kursor untuk efek lipatan
-
-      slats.forEach((slat, index) => {
-        const rect = slat.getBoundingClientRect();
-        const slatCenter = rect.left + rect.width / 2;
-        const dist = Math.abs(mouseX - slatCenter);
-
-        if (dist < radius) {
-          const intensity = Math.pow(1 - dist / radius, 2);
-          
-          // Arah lipatan bergantian selang-seling (accordion fold effect)
-          const foldDirection = index % 2 === 0 ? 1 : -1;
-          const foldAngle = foldDirection * intensity * 40; // Sudut terlipat hingga 40 derajat
-
-          gsap.to(slat, {
-            x: 0, // Posisi grid tetap diam
-            y: 0,
-            rotateY: foldAngle, // Kaca terlipat miring pada sumbu 3D
-            transformPerspective: 700,
-            transformOrigin: 'center center',
-            filter: `brightness(${1 + intensity * 0.7})`,
-            duration: 0.3,
-            ease: 'power2.out',
-            overwrite: 'auto'
-          });
-        } else {
-          // Kembalikan ke posisi semula (rata)
-          gsap.to(slat, {
-            x: 0,
-            y: 0,
-            rotateY: 0,
-            filter: 'brightness(1)',
-            duration: 0.6,
-            ease: 'power2.out',
-            overwrite: 'auto'
-          });
-        }
-      });
-    };
-
-    const handleMouseLeave = () => {
-      const slats = containerRef.current?.querySelectorAll('.slat-item');
-      if (!slats) return;
-
-      gsap.to(slats, {
-        x: 0,
-        y: 0,
-        rotateY: 0,
-        filter: 'brightness(1)',
-        duration: 0.8,
-        ease: 'power2.out',
-        overwrite: 'auto'
-      });
-    };
-
-    const containerEl = containerRef.current;
-    if (containerEl) {
-      containerEl.addEventListener('mousemove', handleMouseMove);
-      containerEl.addEventListener('mouseleave', handleMouseLeave);
-    }
-
     return () => {
       observer.disconnect();
       if (ctx) ctx.revert();
-      if (containerEl) {
-        containerEl.removeEventListener('mousemove', handleMouseMove);
-        containerEl.removeEventListener('mouseleave', handleMouseLeave);
-      }
     };
   }, []);
 
@@ -166,50 +108,97 @@ export default function Hero() {
       id="home"
       className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
     >
-      {/* PRISMATIC REFRACTED GLASS BACKGROUND WITH FOLDING GRID */}
-      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
-        <div className="flex w-full h-full">
-          {Array.from({ length: slatCount }).map((_, index) => {
-            const normalizedIndex = (index / (slatCount - 1)) * 2 - 1;
-            const waveOffset = Math.cos(normalizedIndex * Math.PI * 0.85) * 22;
+      {/* KEYFRAMES EQUALIZER ANIMATION */}
+      <style>{`
+        @keyframes soundWave1 {
+          0%, 100% { height: 3px; }
+          50% { height: 11px; }
+        }
+        @keyframes soundWave2 {
+          0%, 100% { height: 9px; }
+          50% { height: 4px; }
+        }
+        @keyframes soundWave3 {
+          0%, 100% { height: 14px; }
+          50% { height: 6px; }
+        }
+        @keyframes soundWave4 {
+          0%, 100% { height: 6px; }
+          50% { height: 12px; }
+        }
+        @keyframes soundWave5 {
+          0%, 100% { height: 11px; }
+          50% { height: 3px; }
+        }
+        .sw-bar-1 { animation: soundWave1 0.75s ease-in-out infinite; }
+        .sw-bar-2 { animation: soundWave2 0.62s ease-in-out infinite; }
+        .sw-bar-3 { animation: soundWave3 0.88s ease-in-out infinite; }
+        .sw-bar-4 { animation: soundWave4 0.70s ease-in-out infinite; }
+        .sw-bar-5 { animation: soundWave5 0.82s ease-in-out infinite; }
+      `}</style>
 
-            return (
-              <div
-                key={index}
-                className="slat-item flex-1 h-full relative border-r border-[#898A8C]/25 dark:border-white/10 will-change-transform"
-                style={{
-                  background: `linear-gradient(
-                    180deg,
-                    transparent 0%,
-                    transparent ${25 + waveOffset}%,
-                    rgba(84, 90, 91, 0.35) ${42 + waveOffset}%,
-                    rgba(137, 138, 140, 0.65) ${50 + waveOffset}%,
-                    rgba(84, 90, 91, 0.35) ${58 + waveOffset}%,
-                    transparent ${75 + waveOffset}%,
-                    transparent 100%
-                  )`
-                }}
-              >
-                {/* Highlight Kiri Kaca */}
-                <div className="absolute inset-y-0 left-0 w-[1px] bg-gradient-to-b from-transparent via-[#898A8C]/35 dark:via-white/30 to-transparent" />
-                
-                {/* Bayangan Kanan Kaca */}
-                <div className="absolute inset-y-0 right-0 w-[2px] bg-black/15 dark:bg-black/90" />
-              </div>
-            );
-          })}
-        </div>
+      {/* AUDIO ELEMENT */}
+      <audio 
+        ref={audioRef} 
+        src="/audio/tarot-feast.mp3" 
+        loop 
+        preload="none" 
+      />
 
-        {/* Gradasi Bawah */}
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent via-[#EBECEE]/80 dark:via-black/70 to-[#EBECEE] dark:to-black transition-colors duration-400" />
+      {/* SOUNDTRACK WIDGET */}
+      <div className="absolute bottom-8 right-6 sm:right-10 md:right-12 z-20">
+        <button 
+          onClick={toggleAudio}
+          className="flex items-center gap-2 cursor-pointer select-none group text-left focus:outline-none"
+          aria-label="Toggle Soundtrack"
+        >
+          {/* 5 BATANG EQUALIZER */}
+          <div className="flex items-end h-4 w-auto gap-[2px] shrink-0">
+            <span 
+              className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
+                isPlaying ? 'sw-bar-1' : 'h-[3px]'
+              }`} 
+            />
+            <span 
+              className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
+                isPlaying ? 'sw-bar-2' : 'h-[8px]'
+              }`} 
+            />
+            <span 
+              className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
+                isPlaying ? 'sw-bar-3' : 'h-[14px]'
+              }`} 
+            />
+            <span 
+              className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
+                isPlaying ? 'sw-bar-4' : 'h-[7px]'
+              }`} 
+            />
+            <span 
+              className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
+                isPlaying ? 'sw-bar-5' : 'h-[11px]'
+              }`} 
+            />
+          </div>
+
+          {/* TEKS INFORMASI TRACK */}
+          <div className="flex flex-col justify-center">
+            <span className={`text-[8px] sm:text-[9px] text-[#71717A] font-medium leading-none tracking-tight mb-0.5 ${isPlaying ? 'animate-pulse' : ''}`}>
+              Now playing
+            </span>
+            <span className="text-[10px] sm:text-xs font-bold text-[#06151E] dark:text-white leading-none tracking-tight group-hover:underline">
+              .Feast - Tarot
+            </span>
+          </div>
+        </button>
       </div>
 
       {/* GSAP TEXT CONTENT */}
-      <div ref={textRef} className="text-left flex flex-col gap-0.5 max-w-xl lg:max-w-2xl relative z-10">
+      <div ref={textRef} className="text-left flex flex-col gap-0.5 max-w-lg lg:max-w-xl relative z-10">
         {lines.map((line, lineIndex) => (
           <h1 
             key={lineIndex} 
-            className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold leading-tight tracking-tight flex flex-wrap gap-x-[0.25em]"
+            className="text-xs sm:text-sm md:text-base lg:text-lg font-bold leading-tight tracking-tight flex flex-wrap gap-x-[0.25em]"
           >
             {line.split(" ").map((word, wordIndex) => (
               <span 
