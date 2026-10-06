@@ -103,10 +103,10 @@ export default function Hero() {
   }, []);
 
   return (
-    <section 
+    <section
       ref={containerRef}
       id="home"
-      className="relative w-full h-dvh flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
+      className="relative w-full h-vdh flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
     >
       {/* KEYFRAMES EQUALIZER ANIMATION */}
       <style>{`
@@ -138,46 +138,46 @@ export default function Hero() {
       `}</style>
 
       {/* AUDIO ELEMENT */}
-      <audio 
-        ref={audioRef} 
-        src="/audio/tarot-feast.mp3" 
-        loop 
-        preload="none" 
+      <audio
+        ref={audioRef}
+        src="/audio/tarot-feast.mp3"
+        loop
+        preload="none"
       />
 
       {/* SOUNDTRACK WIDGET */}
       <div className="absolute bottom-8 right-6 sm:right-10 md:right-12 z-20">
-        <button 
+        <button
           onClick={toggleAudio}
           className="flex items-center gap-2 cursor-pointer select-none group text-left focus:outline-none"
           aria-label="Toggle Soundtrack"
         >
           {/* 5 BATANG EQUALIZER */}
           <div className="flex items-end h-4 w-auto gap-0.5 shrink-0">
-            <span 
+            <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
                 isPlaying ? 'sw-bar-1' : 'h-0.75'
-              }`} 
+              }`}
             />
-            <span 
+            <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
                 isPlaying ? 'sw-bar-2' : 'h-2'
-              }`} 
+              }`}
             />
-            <span 
+            <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
                 isPlaying ? 'sw-bar-3' : 'h-3.5'
-              }`} 
+              }`}
             />
-            <span 
+            <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
                 isPlaying ? 'sw-bar-4' : 'h-1.75'
-              }`} 
+              }`}
             />
-            <span 
+            <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
                 isPlaying ? 'sw-bar-5' : 'h-2.75'
-              }`} 
+              }`}
             />
           </div>
 
@@ -193,16 +193,16 @@ export default function Hero() {
         </button>
       </div>
 
-      {/* GSAP TEXT CONTENT */}
-      <div ref={textRef} className="text-left flex flex-col gap-0.5 max-w-lg lg:max-w-xl relative z-10">
+      {/* GSAP TEXT CONTENT (kiri bawah, ukuran diperbesar) */}
+      <div ref={textRef} className="text-left flex flex-col gap-1 max-w-xl lg:max-w-2xl relative z-10">
         {lines.map((line, lineIndex) => (
-          <h1 
-            key={lineIndex} 
-            className="text-xs sm:text-sm md:text-base lg:text-lg font-bold leading-tight tracking-tight flex flex-wrap gap-x-[0.25em]"
+          <h1
+            key={lineIndex}
+            className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold leading-tight tracking-tight flex flex-wrap gap-x-[0.25em]"
           >
             {line.split(" ").map((word, wordIndex) => (
-              <span 
-                key={wordIndex} 
+              <span
+                key={wordIndex}
                 className="scroll-word inline-block will-change-[color]"
               >
                 {word}
