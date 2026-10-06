@@ -143,18 +143,18 @@ export default function Navbar() {
       <header className="fixed top-4 md:top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
         <nav 
           ref={navRef}
-          className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 rounded-[6px] shadow-sm dark:shadow-none transition-all duration-300 ease-out hover:scale-[1.015]"
+          className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 'rounded-[6px]' shadow-sm dark:shadow-none transition-all duration-300 ease-out hover:scale-[1.015]"
         >
           {/* LOGO */}
           <a 
             href="#" 
-            className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-white dark:text-[#171717] dark:hover:bg-neutral-200 rounded-[4px] font-bold text-[10px] md:text-xs transition-colors border border-black/10 dark:border-white/50 tracking-wider shrink-0"
+            className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-white dark:text-[#171717] dark:hover:bg-neutral-200 rounded-sm font-bold text-[10px] md:text-xs transition-colors border border-black/10 dark:border-white/50 tracking-wider shrink-0"
           >
             CANEVNO
           </a>
 
           {/* CONTAINER TENGAH */}
-          <div className="flex items-center justify-center bg-[#dedee3]/80 dark:bg-[#202020]/60 p-0.5 rounded-[4px] border border-[#d1d1d6]/60 dark:border-[#3d3d3d]/50 overflow-hidden min-w-[32px] md:min-w-[36px] min-h-[28px] md:min-h-[32px]">
+          <div className="flex items-center justify-center bg-[#dedee3]/80 dark:bg-[#202020]/60 p-0.5 rounded-sm border border-[#d1d1d6]/60 dark:border-[#3d3d3d]/50 overflow-hidden min-w-8 md:min-w-9 min-h-7 md:min-h-8">
             {/* Menu Lengkap */}
             <div ref={fullMenuRef} className="flex items-center gap-0.5 origin-center">
               {navItems.map((item) => {
@@ -192,7 +192,7 @@ export default function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#d8d8dd] hover:bg-[#ceced3] text-[#1c1c1e] dark:bg-[#3d3d3d]/80 dark:hover:bg-[#4a4a4a] dark:text-white rounded-[4px] transition-all duration-300 shrink-0 cursor-pointer"
+            className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#d8d8dd] hover:bg-[#ceced3] text-[#1c1c1e] dark:bg-[#3d3d3d]/80 dark:hover:bg-[#4a4a4a] dark:text-white rounded-sm transition-all duration-300 shrink-0 cursor-pointer"
           >
             {isDark ? (
               /* Sun Icon */
@@ -218,7 +218,7 @@ export default function Navbar() {
           {/* CONTACT ME */}
           <a
             href="#contact"
-            className="flex items-center justify-center h-7 md:h-8.5 px-2.5 md:px-3.5 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-[#ececec] dark:hover:bg-white dark:text-[#121212] font-semibold text-[10px] md:text-xs rounded-[4px] transition-all duration-300 active:scale-95 whitespace-nowrap shrink-0"
+            className="flex items-center justify-center h-7 md:h-8.5 px-2.5 md:px-3.5 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-[#ececec] dark:hover:bg-white dark:text-[#121212] font-semibold text-[10px] md:text-xs rounded-sm transition-all duration-300 active:scale-95 whitespace-nowrap shrink-0"
           >
             Contact Me
           </a>
@@ -227,7 +227,7 @@ export default function Navbar() {
 
       {/* TOMBOL BACK TO TOP (BOTTOM RIGHT) */}
       <div
-        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 rounded-[6px] shadow-sm dark:shadow-none transition-all duration-500 hover:scale-[1.03] ${
+        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 rounded-md shadow-sm dark:shadow-none transition-all duration-500 hover:scale-[1.03] ${
           showBackToTop 
             ? 'opacity-100 translate-y-0 pointer-events-auto' 
             : 'opacity-0 translate-y-3 pointer-events-none'
@@ -236,7 +236,7 @@ export default function Navbar() {
         <button
           onClick={scrollToTop}
           aria-label="Back to Top"
-          className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-[#ececec] dark:hover:bg-white dark:text-[#121212] rounded-[4px] transition-all duration-300 active:scale-90 cursor-pointer"
+          className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-[#ececec] dark:hover:bg-white dark:text-[#121212] rounded-sm transition-all duration-300 active:scale-90 cursor-pointer"
         >
           <svg 
             className="w-3.5 h-3.5 md:w-4 md:h-4 stroke-current fill-none transition-transform duration-300 group-hover:-translate-y-0.5" 

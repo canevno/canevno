@@ -106,7 +106,7 @@ export default function Hero() {
     <section 
       ref={containerRef}
       id="home"
-      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
+      className="relative w-full h-dvh flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
     >
       {/* KEYFRAMES EQUALIZER ANIMATION */}
       <style>{`
@@ -153,30 +153,30 @@ export default function Hero() {
           aria-label="Toggle Soundtrack"
         >
           {/* 5 BATANG EQUALIZER */}
-          <div className="flex items-end h-4 w-auto gap-[2px] shrink-0">
+          <div className="flex items-end h-4 w-auto gap-0.5 shrink-0">
             <span 
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-1' : 'h-[3px]'
+                isPlaying ? 'sw-bar-1' : 'h-0.75'
               }`} 
             />
             <span 
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-2' : 'h-[8px]'
+                isPlaying ? 'sw-bar-2' : 'h-2'
               }`} 
             />
             <span 
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-3' : 'h-[14px]'
+                isPlaying ? 'sw-bar-3' : 'h-3.5'
               }`} 
             />
             <span 
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-4' : 'h-[7px]'
+                isPlaying ? 'sw-bar-4' : 'h-1.75'
               }`} 
             />
             <span 
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-5' : 'h-[11px]'
+                isPlaying ? 'sw-bar-5' : 'h-2.75'
               }`} 
             />
           </div>
