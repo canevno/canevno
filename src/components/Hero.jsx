@@ -106,7 +106,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       id="home"
-      className="relative w-full h-vdh flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
+      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
     >
       {/* KEYFRAMES EQUALIZER ANIMATION */}
       <style>{`

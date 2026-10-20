@@ -8,6 +8,7 @@ export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
   
   const navRef = useRef(null);
+  const containerRef = useRef(null);
   const fullMenuRef = useRef(null);
   const iconMenuRef = useRef(null);
   const isCollapsedRef = useRef(false);
@@ -49,66 +50,156 @@ export default function Navbar() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // 1. Kuncup Cepat (Instant Collapse)
+    const nav = navRef.current;
+    const container = containerRef.current;
+    const full = fullMenuRef.current;
+    const icon = iconMenuRef.current;
+
+    if (!nav || !container || !full || !icon) return;
+
+    let menuTl = null;
+
+    // Mengukur lebar container tengah untuk salah satu mode (tanpa terlihat di layar)
+    const measureWidth = (showFull) => {
+      const prevFull = full.style.display;
+      const prevIcon = icon.style.display;
+      const prevWidth = container.style.width;
+
+      full.style.display = showFull ? 'flex' : 'none';
+      icon.style.display = showFull ? 'none' : 'flex';
+      container.style.width = 'auto';
+
+      const w = container.offsetWidth;
+
+      full.style.display = prevFull;
+      icon.style.display = prevIcon;
+      container.style.width = prevWidth;
+
+      return w;
+    };
+
+    // 1. Kuncup (menu lengkap memudar -> lebar menyusut -> ikon muncul)
     const collapseMenu = () => {
       if (isCollapsedRef.current) return;
       isCollapsedRef.current = true;
 
-      gsap.killTweensOf([fullMenuRef.current, iconMenuRef.current]);
+      if (menuTl) menuTl.kill();
+      gsap.killTweensOf([full, icon, container]);
 
-      gsap.to(fullMenuRef.current, {
-        opacity: 0,
-        scale: 0.85,
-        duration: 0.08,
-        ease: 'power4.out',
-        onComplete: () => {
-          if (fullMenuRef.current) fullMenuRef.current.style.display = 'none';
-          if (iconMenuRef.current) {
-            iconMenuRef.current.style.display = 'flex';
-            gsap.fromTo(
-              iconMenuRef.current,
-              { opacity: 0, scale: 0.7 },
-              { opacity: 1, scale: 1, duration: 0.1, ease: 'power2.out' }
-            );
-          }
-        },
-      });
+      const startW = container.offsetWidth;
+      const endW = measureWidth(false);
+
+      menuTl = gsap.timeline();
+
+      // Hanya fade-out jika menu lengkap memang masih tampil
+      if (full.style.display !== 'none') {
+        menuTl.to(full, {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.2,
+          ease: 'power2.in',
+        });
+        menuTl.add(() => {
+          full.style.display = 'none';
+          icon.style.display = 'flex';
+          gsap.set(icon, { opacity: 0, scale: 0.7 });
+        });
+      }
+
+      menuTl
+        .fromTo(
+          container,
+          { width: startW },
+          { width: endW, duration: 0.45, ease: 'power3.inOut', clearProps: 'width' },
+          '>'
+        )
+        .to(
+          icon,
+          { opacity: 1, scale: 1, duration: 0.35, ease: 'power2.out' },
+          '<0.1'
+        );
     };
 
-    // 2. Mekar Halus (Smooth Organic Expand)
+    // 2. Mekar (ikon memudar -> lebar melebar -> menu lengkap muncul)
     const expandMenu = () => {
       if (!isCollapsedRef.current) return;
       isCollapsedRef.current = false;
 
-      gsap.killTweensOf([fullMenuRef.current, iconMenuRef.current]);
+      if (menuTl) menuTl.kill();
+      gsap.killTweensOf([full, icon, container]);
 
-      gsap.to(iconMenuRef.current, {
-        opacity: 0,
-        scale: 0.7,
-        duration: 0.12,
-        ease: 'power2.in',
-        onComplete: () => {
-          if (iconMenuRef.current) iconMenuRef.current.style.display = 'none';
-          if (fullMenuRef.current) {
-            fullMenuRef.current.style.display = 'flex';
-            gsap.fromTo(
-              fullMenuRef.current,
-              { opacity: 0, scale: 0.9, filter: 'blur(4px)' },
-              { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out' }
-            );
-          }
-        },
-      });
+      const startW = container.offsetWidth;
+      const endW = measureWidth(true);
+
+      menuTl = gsap.timeline();
+
+      if (icon.style.display === 'flex') {
+        menuTl.to(icon, {
+          opacity: 0,
+          scale: 0.7,
+          duration: 0.15,
+          ease: 'power2.in',
+        });
+        menuTl.add(() => {
+          icon.style.display = 'none';
+          full.style.display = 'flex';
+          gsap.set(full, { opacity: 0, scale: 0.9, filter: 'blur(4px)' });
+        });
+        menuTl
+          .fromTo(
+            container,
+            { width: startW },
+            { width: endW, duration: 0.5, ease: 'power3.out', clearProps: 'width' },
+            '>'
+          )
+          .to(
+            full,
+            {
+              opacity: 1,
+              scale: 1,
+              filter: 'blur(0px)',
+              duration: 0.6,
+              ease: 'power3.out',
+              clearProps: 'filter',
+            },
+            '<'
+          );
+      } else {
+        // Kuncup terpotong sebelum menu lengkap sempat disembunyikan:
+        // lanjutkan saja dari kondisi saat ini tanpa lompatan.
+        menuTl.to(full, {
+          opacity: 1,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.4,
+          ease: 'power3.out',
+          clearProps: 'filter',
+        });
+      }
     };
 
-    // 3. Listener Scroll dengan Penyejajaran Presisi
+    // 3. Gerak vertikal navbar: satu tween yang dipakai ulang (tidak dibuat ulang tiap scroll)
+    const moveY = gsap.quickTo(nav, 'y', {
+      duration: 1.2,
+      ease: 'expo.out',
+    });
+
+    let lastTargetY = 0;
+    let lastShowBackToTop = false;
+
+    // 4. Listener Scroll dengan Penyejajaran Presisi
     const st = ScrollTrigger.create({
       onUpdate: () => {
         const scrollY = window.scrollY;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
 
-        setShowBackToTop(scrollY > 150);
+        // Update state hanya ketika nilainya benar-benar berubah
+        const shouldShowBackToTop = scrollY > 150;
+        if (shouldShowBackToTop !== lastShowBackToTop) {
+          lastShowBackToTop = shouldShowBackToTop;
+          setShowBackToTop(shouldShowBackToTop);
+        }
 
         const isAtTop = scrollY < 120;
         const isNearBottom = (windowHeight + scrollY) >= (documentHeight - 120);
@@ -120,20 +211,21 @@ export default function Navbar() {
         }
 
         const topOffset = window.innerWidth >= 768 ? 20 : 16;
-        const navHeight = navRef.current ? navRef.current.offsetHeight : 44;
+        const navHeight = nav.offsetHeight || 44;
         const targetY = isAtTop ? 0 : windowHeight - navHeight - (topOffset * 2);
 
-        gsap.to(navRef.current, {
-          y: targetY,
-          duration: 1.2,
-          ease: 'expo.out',
-          overwrite: 'auto',
-        });
+        // Hanya gerakkan navbar saat target berubah, supaya easing tidak restart tiap tick scroll
+        if (targetY !== lastTargetY) {
+          lastTargetY = targetY;
+          moveY(targetY);
+        }
       },
     });
 
     return () => {
       st.kill();
+      if (menuTl) menuTl.kill();
+      gsap.killTweensOf([nav, full, icon, container]);
     };
   }, []);
 
@@ -143,7 +235,7 @@ export default function Navbar() {
       <header className="fixed top-4 md:top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
         <nav 
           ref={navRef}
-          className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 'rounded-[6px]' shadow-sm dark:shadow-none transition-all duration-300 ease-out hover:scale-[1.015]"
+          className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 'rounded-[6px]' shadow-sm dark:shadow-none transition-[scale,background-color,border-color,box-shadow] duration-300 ease-out hover:scale-[1.015] will-change-transform"
         >
           {/* LOGO */}
           <a 
@@ -154,7 +246,10 @@ export default function Navbar() {
           </a>
 
           {/* CONTAINER TENGAH */}
-          <div className="flex items-center justify-center bg-[#dedee3]/80 dark:bg-[#202020]/60 p-0.5 rounded-sm border border-[#d1d1d6]/60 dark:border-[#3d3d3d]/50 overflow-hidden min-w-8 md:min-w-9 min-h-7 md:min-h-8">
+          <div
+            ref={containerRef}
+            className="flex items-center justify-center bg-[#dedee3]/80 dark:bg-[#202020]/60 p-0.5 rounded-sm border border-[#d1d1d6]/60 dark:border-[#3d3d3d]/50 overflow-hidden min-w-8 md:min-w-9 min-h-7 md:min-h-8"
+          >
             {/* Menu Lengkap */}
             <div ref={fullMenuRef} className="flex items-center gap-0.5 origin-center">
               {navItems.map((item) => {
@@ -256,7 +351,7 @@ export default function Navbar() {
 
 const navItems = [
   { id: 'Home', label: 'Home' },
+  { id: 'Aboutme', label: 'Aboutme' },
   { id: 'Project', label: 'Project' },
-  { id: 'Organisasi', label: 'Organisasi' },
   { id: 'Gallery', label: 'Gallery' },
 ];

@@ -1,6 +1,7 @@
 ---
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
+import About from '../components/About.jsx';
 import '../styles/global.css';
 
 ---
@@ -36,18 +37,8 @@ import '../styles/global.css';
       
 
       <!-- 3. ABOUT SECTION -->
-      <section 
-        id="about" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
-      >
-        <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">About</h2>
-          <p class="text-[#545A5B] dark:text-[#898A8C] text-sm md:text-base transition-colors duration-400">
-            Area profil dan latar belakang.
-          </p>
-        </div>
-      </section>
-
+     <About client:load />
+     
       <!-- 4. PROJECT SECTION -->
       <section 
         id="project" 
