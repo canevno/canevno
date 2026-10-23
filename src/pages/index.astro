@@ -1,9 +1,15 @@
 ---
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
-import About from '../components/About.jsx';
+import About from '../components/About.astro';
+import PixelScroll from '../components/PixelScroll.astro';
+import Project from '../components/Project';
+import Organisasi from '../components/Organisasi';
+import Gallery from '../components/Gallery';
+import Contact from '../components/Contact';
+import Cursor from '../components/Cursor.astro';
+import Preloader from '../components/Preloader.astro';
 import '../styles/global.css';
-
 ---
 
 <!DOCTYPE html>
@@ -13,114 +19,282 @@ import '../styles/global.css';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Evand Aprilliano</title>
 
-    <!-- ANTI-FOUC SCRIPT: Menyesuaikan kelas dark sebelum DOM selesai di-render -->
     <script is:inline>
-      const theme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (theme === 'dark' || (!theme && prefersDark)) {
+      (function () {
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        try {
+          var seen = localStorage.getItem('pl-seen') === '1';
+          var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var raw = sessionStorage.getItem('scroll-pos');
+          var savedR = raw ? JSON.parse(raw).r : 0;
+          if ((seen || reduce) && (location.hash.length > 1 || savedR > 0)) {
+            document.documentElement.classList.add('is-restoring');
+            setTimeout(function () {
+              document.documentElement.classList.remove('is-restoring');
+            }, 2500);
+          }
+        } catch (e) {}
         document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      })();
     </script>
+    <style is:inline>
+      html.is-restoring main,
+      html.is-restoring [data-site-nav] { visibility: hidden; }
+      html.is-restoring *,
+      html.is-restoring *::before,
+      html.is-restoring *::after { transition: none !important; }
+
+      html.lenis, html.lenis body { height: auto; }
+      .lenis.lenis-smooth { scroll-behavior: auto !important; }
+      .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+      .lenis.lenis-stopped { overflow: hidden; }
+      .lenis.lenis-scrolling iframe { pointer-events: none; }
+
+      #stage,
+      #stage > * { background-color: transparent !important; }
+    </style>
   </head>
-  <body class="w-full min-h-screen bg-[#EBECEE] dark:bg-black text-[#06151E] dark:text-white transition-colors duration-400 overflow-x-hidden selection:bg-[#06151E] selection:text-white dark:selection:bg-white dark:selection:text-black">
-    
-    <!-- NAVBAR -->
+  <body class="w-full min-h-screen bg-[#EBECEE] dark:bg-black text-[#06151E] dark:text-white transition-colors duration-[400ms] overflow-x-hidden selection:bg-[#06151E] selection:text-white dark:selection:bg-white dark:selection:text-black">
+    <Preloader />
+    <Cursor />
     <Navbar client:load />
 
-    <!-- MAIN CONTENT -->
-    <main class="relative w-full">
+    <main class="relative w-full" id="main-content">
+      <!-- 1. HERO -->
+      <div id="stage" class="relative w-full h-[100dvh] min-h-[580px] overflow-hidden">
+        <Hero client:load />
+      </div>
+
+      <!-- 2. ABOUT -->
+      <About />
+
       
-      <!-- 1. HERO SECTION -->
-      <Hero client:load />
-      
+      <!-- PIXEL DIVIDER ANIMASI -->
+      <PixelScroll />
 
-      <!-- 3. ABOUT SECTION -->
-     <About client:load />
-     
-      <!-- 4. PROJECT SECTION -->
-      <section 
-        id="project" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
-      >
-        <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Project</h2>
-          <p class="text-[#545A5B] dark:text-[#898A8C] text-sm md:text-base transition-colors duration-400">
-            Galeri karya dan proyek utama.
-          </p>
-        </div>
-      </section>
+      <!-- 3. PROJECT SECTION -->
+      <Project />
 
-      <!-- 5. ORGANISASI SECTION -->
-      <section 
-        id="organisasi" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
-      >
-        <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Organisasi</h2>
-          <p class="text-[#545A5B] dark:text-[#898A8C] text-sm md:text-base transition-colors duration-400">
-            Pengalaman dan rekam jejak organisasi.
-          </p>
-        </div>
-      </section>
+      <!-- 4. ORGANISASI SECTION -->
+      <Organisasi client:load />
 
-      <!-- 6. GALLERY SECTION -->
-      <section 
-        id="gallery" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
-      >
-        <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Gallery</h2>
-          <p class="text-[#545A5B] dark:text-[#898A8C] text-sm md:text-base transition-colors duration-400">
-            Dokumentasi visual dan momen penting.
-          </p>
-        </div>
-      </section>
+      <!-- 5. GALLERY SECTION -->
+      <Gallery />
 
-      <!-- 7. CONTACT SECTION -->
-      <section 
-        id="contact" 
-        class="min-h-screen flex items-center justify-center px-4 md:px-8 scroll-mt-16"
-      >
-        <div class="max-w-4xl text-center">
-          <h2 class="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Contact</h2>
-          <p class="text-[#545A5B] dark:text-[#898A8C] text-sm md:text-base transition-colors duration-400">
-            Formulir atau kontak sosial media.
-          </p>
-        </div>
-      </section>
-
+      <!-- 6. CONTACT SECTION -->
+      <Contact />
     </main>
 
-    <!-- FOOTER -->
-    <footer class="w-full py-8 text-center text-xs text-[#898A8C] bg-[#EBECEE] dark:bg-black transition-colors duration-400">
+    <footer class="w-full py-8 text-center text-xs text-[#898A8C] bg-[#EBECEE] dark:bg-black">
       <p>© {new Date().getFullYear()} Evand Aprilliano. All rights reserved.</p>
     </footer>
 
-    <!-- SCRIPT SMOOTH SCROLL LENIS & GSAP -->
     <script>
       import Lenis from 'lenis';
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import { initLandingAnimations, playHeroAnimations } from '../scripts/animations.js';
 
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
 
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      const w = window as any;
+      const html = document.documentElement;
 
+      if (typeof w.__cleanupStage === 'function') w.__cleanupStage();
+
+      // ===== 1. SMOOTH SCROLL =====
       const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        lerp: 0.1,
         smoothWheel: true,
       });
+      w.__lenis = lenis;
 
+      const tick = (time: number) => lenis.raf(time * 1000);
       lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
 
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
+      // ===== 2. PIN HERO =====
+      const SCROLL_KEY = 'scroll-pos';
+      let restored = false;
+      let lenisAlive = true;
+      let disposed = false;
+
+      const mm = gsap.matchMedia();
+      const stage = document.getElementById('stage');
+
+      if (stage) {
+        mm.add('(prefers-reduced-motion: no-preference)', () => {
+          ScrollTrigger.create({
+            trigger: stage,
+            start: 'top top',
+            end: '+=60%',
+            pin: true,
+            refreshPriority: 1,
+          });
+        });
+
+        mm.add('(prefers-reduced-motion: reduce)', () => {
+          lenis.destroy();
+          lenisAlive = false;
+        });
+      }
+
+      // Jalankan animasi utama proyek Anda
+      initLandingAnimations();
+      playHeroAnimations();
+
+      // ===== 3. SIMPAN POSISI SCROLL =====
+      const preloaderRunning =
+        !html.classList.contains('pl-preloader-hidden') && !!document.getElementById('preloader');
+
+      const readSaved = (): number | null => {
+        try {
+          const raw = sessionStorage.getItem(SCROLL_KEY);
+          if (!raw) return null;
+          const r = JSON.parse(raw)?.r;
+          return typeof r === 'number' && Number.isFinite(r) && r >= 0 ? r : null;
+        } catch {
+          return null;
+        }
+      };
+
+      const savePos = () => {
+        if (!restored) return;
+        try {
+          sessionStorage.setItem(SCROLL_KEY, JSON.stringify({ r: window.scrollY / window.innerHeight }));
+        } catch {}
+      };
+
+      let saveT = 0;
+      const scheduleSave = () => {
+        if (!restored) return;
+        clearTimeout(saveT);
+        saveT = window.setTimeout(savePos, 150);
+      };
+      const offLenisScroll = lenis.on('scroll', scheduleSave);
+      const onNativeScroll = () => scheduleSave();
+      if (!lenisAlive) window.addEventListener('scroll', onNativeScroll, { passive: true });
+
+      const onPageHide = () => savePos();
+      const onVisibility = () => {
+        if (document.visibilityState === 'hidden') savePos();
+      };
+      window.addEventListener('pagehide', onPageHide);
+      document.addEventListener('visibilitychange', onVisibility);
+
+      // ===== 4. TENTUKAN TARGET SCROLL =====
+      const getTarget = (): number => {
+        const hash = location.hash;
+        if (hash.length > 1) {
+          let el: Element | null = null;
+          try {
+            el = document.querySelector(hash);
+          } catch {
+            el = null;
+          }
+          if (el) return Math.max(0, el.getBoundingClientRect().top + window.scrollY - 64);
+        }
+        if (!preloaderRunning) {
+          const r = readSaved();
+          if (r !== null) return r * window.innerHeight;
+        }
+        return 0;
+      };
+
+      // ===== 5. RESTORE SCROLL =====
+      const pageLoaded = new Promise<void>((resolve) => {
+        if (document.readyState === 'complete') resolve();
+        else window.addEventListener('load', () => resolve(), { once: true });
+      });
+      const fontsReady: Promise<unknown> = (document as any).fonts?.ready ?? Promise.resolve();
+      const waitFor = (cond: () => boolean, max = 2000) =>
+        new Promise<void>((resolve) => {
+          const t0 = performance.now();
+          const poll = () => {
+            if (disposed || cond() || performance.now() - t0 >= max) resolve();
+            else setTimeout(poll, 50);
+          };
+          poll();
+        });
+      const nextFrames = (n: number) =>
+        new Promise<void>((resolve) => {
+          const step = (i: number) => (i <= 0 ? resolve() : requestAnimationFrame(() => step(i - 1)));
+          step(n);
+        });
+
+      const failsafe = setTimeout(() => html.classList.remove('is-restoring'), 2500);
+
+      const restoreScroll = async () => {
+        await Promise.all([
+          pageLoaded,
+          fontsReady,
+          waitFor(() => w.__navReady === true, 2000),
+        ]);
+        await nextFrames(2);
+        if (disposed) return;
+
+        ScrollTrigger.refresh();
+
+        const target = getTarget();
+        if (lenisAlive) {
+          try {
+            lenis.scrollTo(target, { immediate: true, force: true });
+          } catch {
+            window.scrollTo({ top: target, left: 0, behavior: 'auto' });
+          }
+        } else {
+          window.scrollTo({ top: target, left: 0, behavior: 'auto' });
+        }
+        ScrollTrigger.update();
+        ScrollTrigger.getAll().forEach((st) => st.getTween()?.progress(1));
+        window.dispatchEvent(new Event('scroll:restored'));
+
+        if (lenisAlive && !html.classList.contains('is-loading')) lenis.start();
+
+        restored = true;
+        requestAnimationFrame(() => {
+          html.classList.remove('is-restoring');
+          clearTimeout(failsafe);
+        });
+      };
+      restoreScroll();
+
+      fontsReady.then(() => {
+        if (!disposed) ScrollTrigger.refresh();
       });
 
-      gsap.ticker.lagSmoothing(0);
+      const onPreloaderDone = () => {
+        if (lenisAlive) lenis.start();
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener('preloader:done', onPreloaderDone);
+
+      const onPageShow = (e: PageTransitionEvent) => {
+        if (e.persisted) ScrollTrigger.refresh();
+      };
+      window.addEventListener('pageshow', onPageShow);
+
+      // ===== 6. CLEANUP =====
+      w.__cleanupStage = () => {
+        disposed = true;
+        clearTimeout(failsafe);
+        clearTimeout(saveT);
+        window.removeEventListener('pageshow', onPageShow);
+        window.removeEventListener('preloader:done', onPreloaderDone);
+        window.removeEventListener('pagehide', onPageHide);
+        window.removeEventListener('scroll', onNativeScroll);
+        document.removeEventListener('visibilitychange', onVisibility);
+        try {
+          offLenisScroll?.();
+        } catch {}
+        gsap.ticker.remove(tick);
+        mm.revert();
+        try {
+          lenis.destroy();
+        } catch {}
+      };
     </script>
   </body>
 </html>

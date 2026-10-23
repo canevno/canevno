@@ -9,13 +9,7 @@ export default function Hero() {
   const textRef = useRef(null);
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  const lines = [
-    "I'm Evand Aprilliano",
-    "Active student in software engineering",
-    "Have high anticipation In the field",
-    "Front-end Development"
-  ];
+  const [heroImageReady, setHeroImageReady] = useState(true);
 
   const toggleAudio = () => {
     const nextState = !isPlaying;
@@ -80,21 +74,25 @@ export default function Hero() {
           );
         }
       }, containerRef);
-
-      ScrollTrigger.refresh();
     };
 
     buildAnimation();
 
+    // Observer terbatas khusus class 'dark' agar tidak memicu infinite loop saat scroll/refresh
+    let lastDark = document.documentElement.classList.contains('dark');
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
+      for (const mutation of mutations) {
         if (mutation.attributeName === 'class') {
-          buildAnimation();
+          const currentDark = document.documentElement.classList.contains('dark');
+          if (currentDark !== lastDark) {
+            lastDark = currentDark;
+            buildAnimation();
+          }
         }
-      });
+      }
     });
 
-    observer.observe(document.documentElement, { attributes: true });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     return () => {
       observer.disconnect();
@@ -106,7 +104,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       id="home"
-      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black transition-colors duration-400 overflow-hidden"
+      className="relative w-full h-[100dvh] flex flex-col justify-end items-start px-6 sm:px-10 md:px-12 pb-8 md:pb-10 bg-[#EBECEE] dark:bg-black overflow-hidden"
     >
       {/* KEYFRAMES EQUALIZER ANIMATION */}
       <style>{`
@@ -145,6 +143,26 @@ export default function Hero() {
         preload="none"
       />
 
+      <span className="absolute bottom-8 left-6 sm:left-10 md:left-12 z-20 text-[13px] sm:text-xs font-bold text-[#06151E] dark:text-white">
+        evandaprilliano@gmail.com
+      </span>
+
+      {/* GAMBAR HERO DENGAN MASKING TRANSPARAN (TANPA SHADOW OVERLAY) */}
+      <div className="absolute left-1/2 top-[62%] z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
+        <div className="relative h-[520px] w-[340px] overflow-hidden sm:h-[620px] sm:w-[420px] md:h-[700px] md:w-[480px]">
+          <img
+            src="/image/imagehero.webp"
+            alt="Hero visual"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            onLoad={() => setHeroImageReady(true)}
+            onError={() => setHeroImageReady(true)}
+            className={`relative block h-full w-full object-contain object-center transition-opacity duration-300 ${heroImageReady ? 'opacity-100' : 'opacity-0'}`}
+          />
+        </div>
+      </div>
+
       {/* SOUNDTRACK WIDGET */}
       <div className="absolute bottom-8 right-6 sm:right-10 md:right-12 z-20">
         <button
@@ -156,27 +174,27 @@ export default function Hero() {
           <div className="flex items-end h-4 w-auto gap-0.5 shrink-0">
             <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-1' : 'h-0.75'
+                isPlaying ? 'sw-bar-1' : 'h-[3px]'
               }`}
             />
             <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-2' : 'h-2'
+                isPlaying ? 'sw-bar-2' : 'h-[8px]'
               }`}
             />
             <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-3' : 'h-3.5'
+                isPlaying ? 'sw-bar-3' : 'h-[14px]'
               }`}
             />
             <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-4' : 'h-1.75'
+                isPlaying ? 'sw-bar-4' : 'h-[7px]'
               }`}
             />
             <span
               className={`w-[2.5px] bg-[#06151E] dark:bg-white rounded-full transition-all duration-300 ${
-                isPlaying ? 'sw-bar-5' : 'h-2.75'
+                isPlaying ? 'sw-bar-5' : 'h-[11px]'
               }`}
             />
           </div>
@@ -193,24 +211,13 @@ export default function Hero() {
         </button>
       </div>
 
-      {/* GSAP TEXT CONTENT (kiri bawah, ukuran diperbesar) */}
-      <div ref={textRef} className="text-left flex flex-col gap-1 max-w-xl lg:max-w-2xl relative z-10">
-        {lines.map((line, lineIndex) => (
-          <h1
-            key={lineIndex}
-            className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold leading-tight tracking-tight flex flex-wrap gap-x-[0.25em]"
-          >
-            {line.split(" ").map((word, wordIndex) => (
-              <span
-                key={wordIndex}
-                className="scroll-word inline-block will-change-[color]"
-              >
-                {word}
-              </span>
-            ))}
-          </h1>
-        ))}
-      </div>
+      {/* GSAP TEXT CONTENT */}
+      <div ref={textRef} className="text-left flex flex-col gap-1 max-w-xl lg:max-w-2xl relative z-10" />
+
+      <div
+        aria-hidden="true"
+        className="hero-to-about-mask pointer-events-none absolute inset-x-0 bottom-0 z-20 h-20 sm:h-24"
+      />
     </section>
   );
 }

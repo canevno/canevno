@@ -4,40 +4,18 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState('Gallery');
-  const [showBackToTop, setShowBackToTop] = useState(false);
-  const [isDark, setIsDark] = useState(false);
-  
+
   const navRef = useRef(null);
+  const backTopRef = useRef(null);
   const containerRef = useRef(null);
   const fullMenuRef = useRef(null);
   const iconMenuRef = useRef(null);
   const isCollapsedRef = useRef(false);
 
-  // Inisialisasi Deteksi & Toggle Tema Global
+  // Tema tetap dark di seluruh project.
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDark(false);
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.add('dark');
   }, []);
-
-  const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      setIsDark(true);
-    }
-  };
 
   // Fungsi scroll halus ke puncak halaman
   const scrollToTop = () => {
@@ -187,42 +165,73 @@ export default function Navbar() {
     let lastTargetY = 0;
     let lastShowBackToTop = false;
 
-    // 4. Listener Scroll dengan Penyejajaran Presisi
+    // Tombol back-to-top dikendalikan lewat atribut data (bukan React state) agar bisa di-snap.
+    // instant: matikan transition sesaat, terapkan, paksa reflow, lalu kembalikan.
+    const setBackTop = (visible, instant) => {
+      const el = backTopRef.current;
+      if (!el) return;
+      if (instant) el.style.transition = 'none';
+      el.dataset.visible = visible ? 'true' : 'false';
+      if (instant) {
+        void el.offsetHeight;
+        el.style.transition = '';
+      }
+    };
+
+    // instant = true: terapkan keadaan akhir tanpa animasi (dipakai saat mount & restore posisi scroll)
+    const syncScrollState = (instant = false) => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      const shouldShowBackToTop = scrollY > 150;
+      if (shouldShowBackToTop !== lastShowBackToTop || instant) {
+        lastShowBackToTop = shouldShowBackToTop;
+        setBackTop(shouldShowBackToTop, instant);
+      }
+
+      const isAtTop = scrollY < 120;
+      const isNearBottom = (windowHeight + scrollY) >= (documentHeight - 120);
+
+      if (isAtTop || isNearBottom) {
+        expandMenu();
+      } else {
+        collapseMenu();
+      }
+      if (instant && menuTl) menuTl.progress(1);
+
+      const topOffset = window.innerWidth >= 768 ? 20 : 16;
+      const navHeight = nav.offsetHeight || 44;
+      const targetY = isAtTop ? 0 : windowHeight - navHeight - (topOffset * 2);
+
+      if (targetY !== lastTargetY || instant) {
+        lastTargetY = targetY;
+        moveY(targetY);
+        if (instant) moveY.tween?.progress(1);
+      }
+    };
+
+    // 4. Listener Scroll dengan inisialisasi dari posisi scroll yang sedang aktif.
+    // Mount: instan, supaya refresh di tengah halaman tidak memutar animasi navbar
+    const mountTimer = setTimeout(() => {
+      syncScrollState(true);
+      // Beritahu index.astro bahwa Navbar sudah hydrate dan keadaannya benar
+      window.__navReady = true;
+      window.dispatchEvent(new Event('nav:ready'));
+    }, 0);
+
     const st = ScrollTrigger.create({
-      onUpdate: () => {
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-
-        // Update state hanya ketika nilainya benar-benar berubah
-        const shouldShowBackToTop = scrollY > 150;
-        if (shouldShowBackToTop !== lastShowBackToTop) {
-          lastShowBackToTop = shouldShowBackToTop;
-          setShowBackToTop(shouldShowBackToTop);
-        }
-
-        const isAtTop = scrollY < 120;
-        const isNearBottom = (windowHeight + scrollY) >= (documentHeight - 120);
-
-        if (isAtTop || isNearBottom) {
-          expandMenu();
-        } else {
-          collapseMenu();
-        }
-
-        const topOffset = window.innerWidth >= 768 ? 20 : 16;
-        const navHeight = nav.offsetHeight || 44;
-        const targetY = isAtTop ? 0 : windowHeight - navHeight - (topOffset * 2);
-
-        // Hanya gerakkan navbar saat target berubah, supaya easing tidak restart tiap tick scroll
-        if (targetY !== lastTargetY) {
-          lastTargetY = targetY;
-          moveY(targetY);
-        }
-      },
+      onUpdate: () => syncScrollState(),
     });
 
+    // Dikirim index.astro setelah posisi scroll dipulihkan: langsung snap ke keadaan yang benar
+    const onRestored = () => syncScrollState(true);
+    window.addEventListener('scroll:restored', onRestored);
+
     return () => {
+      clearTimeout(mountTimer);
+      window.__navReady = false;
+      window.removeEventListener('scroll:restored', onRestored);
       st.kill();
       if (menuTl) menuTl.kill();
       gsap.killTweensOf([nav, full, icon, container]);
@@ -232,7 +241,7 @@ export default function Navbar() {
   return (
     <>
       {/* NAVBAR WRAPPER */}
-      <header className="fixed top-4 md:top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      <header data-site-nav className="fixed top-4 md:top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
         <nav 
           ref={navRef}
           className="pointer-events-auto flex items-center gap-1 md:gap-1.5 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 'rounded-[6px]' shadow-sm dark:shadow-none transition-[scale,background-color,border-color,box-shadow] duration-300 ease-out hover:scale-[1.015] will-change-transform"
@@ -283,33 +292,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* TOGGLE THEME BUTTON */}
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle Theme"
-            className="flex items-center justify-center h-7 w-7 md:h-8.5 md:w-8.5 bg-[#d8d8dd] hover:bg-[#ceced3] text-[#1c1c1e] dark:bg-[#3d3d3d]/80 dark:hover:bg-[#4a4a4a] dark:text-white rounded-sm transition-all duration-300 shrink-0 cursor-pointer"
-          >
-            {isDark ? (
-              /* Sun Icon */
-              <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="4"/>
-                <path d="M12 2v2"/>
-                <path d="M12 20v2"/>
-                <path d="m4.93 4.93 1.41 1.41"/>
-                <path d="m17.66 17.66 1.41 1.41"/>
-                <path d="M2 12h2"/>
-                <path d="M20 12h2"/>
-                <path d="m6.34 17.66-1.41 1.41"/>
-                <path d="m19.07 4.93-1.41 1.41"/>
-              </svg>
-            ) : (
-              /* Moon Icon (Sesuai gambar referensi) */
-              <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
-            )}
-          </button>
-
           {/* CONTACT ME */}
           <a
             href="#contact"
@@ -322,11 +304,10 @@ export default function Navbar() {
 
       {/* TOMBOL BACK TO TOP (BOTTOM RIGHT) */}
       <div
-        className={`fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 rounded-md shadow-sm dark:shadow-none transition-all duration-500 hover:scale-[1.03] ${
-          showBackToTop 
-            ? 'opacity-100 translate-y-0 pointer-events-auto' 
-            : 'opacity-0 translate-y-3 pointer-events-none'
-        }`}
+        ref={backTopRef}
+        data-site-nav
+        data-visible="false"
+        className="fixed bottom-4 right-4 md:bottom-5 md:right-5 z-50 p-1 bg-[#e8e8ed]/90 dark:bg-[#2b2b2b]/75 backdrop-blur-md border border-[#d1d1d6]/80 dark:border-[#444444]/60 rounded-md shadow-sm dark:shadow-none transition-all duration-500 hover:scale-[1.03] opacity-0 translate-y-3 pointer-events-none data-[visible=true]:opacity-100 data-[visible=true]:translate-y-0 data-[visible=true]:pointer-events-auto"
       >
         <button
           onClick={scrollToTop}

@@ -1,0 +1,106 @@
+﻿---
+// src/components/About.astro
+import PixelScroll from './PixelScroll.astro';
+---
+
+<section id="about" class="relative w-full bg-[#000000] text-white">
+  <div
+    class="flex min-h-svh w-full flex-col justify-between gap-16 px-6 py-10 md:px-10 lg:px-[5.5vw]"
+  >
+    <!-- Heading -->
+    <h1
+      class="font-['Outfit',sans-serif] text-[clamp(2rem,5.1vw,6.4rem)] font-light leading-[1.12] tracking-[-0.015em]"
+      aria-label="Where intent meets execution, identity takes shape with confidence and restraint."
+    >
+      <span class="line block overflow-hidden pb-[0.08em] lg:whitespace-nowrap lg:pl-[15vw]" aria-hidden="true">
+        <span class="line-inner block">Where intent meets execution,</span>
+      </span>
+      <span class="line block overflow-hidden pb-[0.08em] lg:whitespace-nowrap" aria-hidden="true">
+        <span class="line-inner block">identity takes shape with confidence</span>
+      </span>
+      <span class="line block overflow-hidden pb-[0.08em] lg:whitespace-nowrap" aria-hidden="true">
+        <span class="line-inner accent-sweep block">and restraint.</span>
+      </span>
+    </h1>
+
+    <!-- Body + CTA -->
+    <div class="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+      <p
+        data-fade
+        class="max-w-[36ch] font-['Roboto_Mono',ui-monospace,monospace] text-[clamp(0.8rem,1vw,0.95rem)] font-light leading-[1.6] text-[#a8a8a8] selection:bg-[#d4ff7a] selection:text-black"
+      >
+        We intentionally limit our projects so each client receives our full attention,
+        clear communication, and consistent ownership of the work.
+      </p>
+
+      <a
+        data-fade
+        href="#contact"
+        class="group relative w-fit whitespace-nowrap pb-2 font-['Roboto_Mono',ui-monospace,monospace] text-[clamp(0.85rem,1.1vw,1rem)] uppercase tracking-[0.06em] text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-[#d4ff7a]"
+      >
+        Let’s talk
+        <span
+          class="absolute inset-x-0 bottom-0 h-px bg-[#6b6b6b] transition-colors duration-200 group-hover:bg-[#d4ff7a] group-focus-visible:bg-[#d4ff7a]"
+        ></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Pixel Divider Animasi di Bagian Bawah About -->
+  <PixelScroll />
+</section>
+
+<style>
+  .accent-sweep {
+    background: linear-gradient(90deg, #e53935 0 50%, #ffffff 50% 100%) 100% 0 / 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  const section = document.getElementById('about');
+
+  if (section) {
+    const lines = section.querySelectorAll<HTMLElement>('.line-inner');
+    const fades = section.querySelectorAll<HTMLElement>('[data-fade]');
+    const accent = section.querySelector<HTMLElement>('.accent-sweep');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce) {
+      if (accent) accent.style.backgroundPosition = '0% 0';
+    } else {
+      const run = () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        tl.fromTo(
+          lines,
+          { yPercent: 105 },
+          { yPercent: 0, duration: 1.1, stagger: 0.12 }
+        );
+
+        if (accent) {
+          tl.fromTo(
+            accent,
+            { backgroundPosition: '100% 0' },
+            { backgroundPosition: '0% 0', duration: 1.6, ease: 'power2.inOut' },
+            '-=0.1'
+          );
+        }
+
+        tl.fromTo(
+          fades,
+          { opacity: 0 },
+          { opacity: 1, duration: 1.2, stagger: 0.2, ease: 'power1.out' },
+          '-=1.4'
+        );
+      };
+
+      (document.fonts?.ready ?? Promise.resolve()).then(run);
+    }
+  }
+</script>
