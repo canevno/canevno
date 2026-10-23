@@ -50,7 +50,7 @@ const styles = `
   flex-direction: column;
   width: 100%;
   min-height: 100dvh;
-  overflow: hidden;
+  overflow: visible;
   background: #F4F0E8;
   color: #090909;
   font-family: 'Outfit', system-ui, sans-serif;
@@ -149,7 +149,19 @@ const styles = `
 .hr-btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, 0.9); }
 .hr-arrow { width: max(13px, calc(var(--u) * 10)); height: max(13px, calc(var(--u) * 10)); }
 
-.hr-labels { align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: max(5px, calc(var(--u) * 4)); }
+@media (max-width: 767px) {
+  .hr-btns {
+    display: none;
+  }
+}
+
+.hr-labels {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: max(5px, calc(var(--u) * 4));
+}
 .hr-label-row { display: flex; gap: max(5px, calc(var(--u) * 4)); }
 .hr-pill {
   display: inline-flex;
@@ -161,6 +173,12 @@ const styles = `
   background: rgba(255, 255, 255, 0.08);
   font-size: max(11px, calc(var(--u) * 6.8));
   white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .hr-labels {
+    display: none;
+  }
 }
 `;
 
@@ -174,7 +192,7 @@ export default function Hero() {
         <span>{topRight}</span>
       </div>
 
-      <h1 className="hr-title">
+      <h1 className="hr-title" data-animate="hero-text">
         <svg viewBox="0 0 1000 205" role="img" aria-label={bigWord}>
           <defs>
             {/* gradasi horizontal: huruf bergantian merah tua dan oranye-merah */}
@@ -232,7 +250,7 @@ export default function Hero() {
         </svg>
       </h1>
 
-      <div className="hr-media">
+      <div className="hr-media" data-animate="hero-visual">
         <img
           className="hr-img"
           src="/image/imagehero.webp"

@@ -64,25 +64,35 @@ import '../styles/global.css';
 
     <main class="relative w-full" id="main-content">
       <!-- 1. HERO -->
-      <div id="stage" class="relative w-full h-[100dvh] min-h-[580px] overflow-hidden">
+      <div id="stage" class="relative w-full min-h-[100dvh] h-auto overflow-visible">
         <Hero client:load />
       </div>
 
       <!-- 2. ABOUT -->
-      <About />
+      <div id="about">
+        <About />
+      </div>
 
       <!-- 3. PROJECT SECTION -->
-      <Project />
+      <div id="project">
+        <Project />
+      </div>
 
       <!-- 4. TECHNOLOGY SECTION -->
-      <Technology client:load />
+      <div id="technology">
+        <Technology client:load />
+      </div>
 
       <!-- 5. GALLERY SECTION -->
-      <Gallery />
+      <div id="gallery">
+        <Gallery />
+      </div>
 
       <!-- 6. CONTACT SECTION -->
       <div class="h-6 md:h-8"></div>
-      <Contact />
+      <div id="contact">
+        <Contact />
+      </div>
     </main>
 
     <script>
@@ -121,7 +131,12 @@ import '../styles/global.css';
       const stage = document.getElementById('stage');
 
       if (stage) {
-        mm.add('(prefers-reduced-motion: no-preference)', () => {
+        mm.add('(max-width: 767px)', () => {
+          // Mobile: hindari pin hero yang membuat gerak terasa kasar dan terlalu berat.
+          // Biarkan hero tetap di alur normal scroll agar transisi lebih mulus.
+        });
+
+        mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
           ScrollTrigger.create({
             trigger: stage,
             start: 'top top',

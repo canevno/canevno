@@ -682,35 +682,10 @@ export function initLandingAnimations() {
 
 export function playHeroAnimations() {
     gsap.set("#main-content", { autoAlpha: 1 });
-    const heroText = document.querySelector('[data-animate="hero-text"]');
-    const heroVisual = document.querySelector('[data-animate="hero-visual"]');
-
-    if (heroText) {
-        gsap.fromTo(
-            heroText.children,
-            { opacity: 0, y: 30 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                stagger: 0.12,
-            }
-        );
-    }
-
-    if (heroVisual) {
-        gsap.fromTo(
-            heroVisual,
-            { opacity: 0, y: 40, scale: 0.97 },
-            {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 1,
-                delay: 0.2,
-                ease: "power2.out",
-            }
-        );
-    }
+    gsap.set('[data-animate="hero-text"], [data-animate="hero-visual"]', {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        clearProps: "transform,opacity"
+    });
 }

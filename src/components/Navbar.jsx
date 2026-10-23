@@ -35,6 +35,19 @@ export default function Navbar() {
     });
   };
 
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    const navOffset = 80;
+    const top = section.getBoundingClientRect().top + window.scrollY - navOffset;
+
+    window.scrollTo({
+      top,
+      behavior: 'smooth',
+    });
+  };
+
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -284,7 +297,11 @@ export default function Navbar() {
         >
           {/* LOGO */}
           <a 
-            href="#" 
+            href="#home" 
+            onClick={(event) => {
+              event.preventDefault();
+              scrollToSection('home');
+            }}
             className="flex items-center justify-center h-7 md:h-8.5 px-2 md:px-3 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white dark:bg-white dark:text-[#171717] dark:hover:bg-neutral-200 rounded-sm font-bold text-[10px] md:text-xs transition-colors border border-black/10 dark:border-white/50 tracking-wider shrink-0"
           >
             CANEVNO
@@ -302,8 +319,10 @@ export default function Navbar() {
                 return (
                   <button
                     key={item.id}
+                    type="button"
                     onClick={() => {
                       setActiveTab(item.id);
+                      scrollToSection(item.id);
                       actionsRef.current.close();
                     }}
                     className={`h-6 md:h-7.5 px-1.5 md:px-3 text-[10px] md:text-xs font-medium rounded-[3px] transition-all duration-300 whitespace-nowrap ${
@@ -372,8 +391,8 @@ export default function Navbar() {
 }
 
 const navItems = [
-  { id: 'Home', label: 'Home' },
-  { id: 'Aboutme', label: 'Aboutme' },
-  { id: 'Project', label: 'Project' },
-  { id: 'Gallery', label: 'Gallery' },
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'Aboutme' },
+  { id: 'project', label: 'Project' },
+  { id: 'gallery', label: 'Gallery' },
 ];
