@@ -2,9 +2,8 @@
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import About from '../components/About.astro';
-import PixelScroll from '../components/PixelScroll.astro';
 import Project from '../components/Project';
-import Organisasi from '../components/Organisasi';
+import Technology from '../components/Technology';
 import Gallery from '../components/Gallery';
 import Contact from '../components/Contact';
 import Cursor from '../components/Cursor.astro';
@@ -29,17 +28,21 @@ import '../styles/global.css';
           var savedR = raw ? JSON.parse(raw).r : 0;
           if ((seen || reduce) && (location.hash.length > 1 || savedR > 0)) {
             document.documentElement.classList.add('is-restoring');
+            // Pengaman terakhir saja (mis. script utama gagal dimuat). Penutup normalnya
+            // dilepas oleh restoreScroll() setelah posisi dipulihkan.
             setTimeout(function () {
               document.documentElement.classList.remove('is-restoring');
-            }, 2500);
+            }, 8000);
           }
         } catch (e) {}
         document.documentElement.classList.add('dark');
       })();
     </script>
     <style is:inline>
+      /* !important wajib: playHeroAnimations() memakai gsap autoAlpha yang menulis
+         visibility inline pada #main-content dan akan mengalahkan aturan ini. */
       html.is-restoring main,
-      html.is-restoring [data-site-nav] { visibility: hidden; }
+      html.is-restoring [data-site-nav] { visibility: hidden !important; }
       html.is-restoring *,
       html.is-restoring *::before,
       html.is-restoring *::after { transition: none !important; }
@@ -68,26 +71,19 @@ import '../styles/global.css';
       <!-- 2. ABOUT -->
       <About />
 
-      
-      <!-- PIXEL DIVIDER ANIMASI -->
-      <PixelScroll />
-
       <!-- 3. PROJECT SECTION -->
       <Project />
 
-      <!-- 4. ORGANISASI SECTION -->
-      <Organisasi client:load />
+      <!-- 4. TECHNOLOGY SECTION -->
+      <Technology client:load />
 
       <!-- 5. GALLERY SECTION -->
       <Gallery />
 
       <!-- 6. CONTACT SECTION -->
+      <div class="h-6 md:h-8"></div>
       <Contact />
     </main>
-
-    <footer class="w-full py-8 text-center text-xs text-[#898A8C] bg-[#EBECEE] dark:bg-black">
-      <p>© {new Date().getFullYear()} Evand Aprilliano. All rights reserved.</p>
-    </footer>
 
     <script>
       import Lenis from 'lenis';
@@ -224,7 +220,7 @@ import '../styles/global.css';
           step(n);
         });
 
-      const failsafe = setTimeout(() => html.classList.remove('is-restoring'), 2500);
+      const failsafe = setTimeout(() => html.classList.remove('is-restoring'), 8000);
 
       const restoreScroll = async () => {
         await Promise.all([
@@ -240,6 +236,9 @@ import '../styles/global.css';
         const target = getTarget();
         if (lenisAlive) {
           try {
+            // Dimensi Lenis di-debounce 250 ms, jadi limit-nya bisa masih memakai tinggi
+            // dokumen lama dan memotong target (mendarat di atas section tujuan).
+            lenis.resize();
             lenis.scrollTo(target, { immediate: true, force: true });
           } catch {
             window.scrollTo({ top: target, left: 0, behavior: 'auto' });

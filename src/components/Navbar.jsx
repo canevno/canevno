@@ -11,10 +11,20 @@ export default function Navbar() {
   const fullMenuRef = useRef(null);
   const iconMenuRef = useRef(null);
   const isCollapsedRef = useRef(false);
+  // Aksi buka/tutup manual dari tombol menu (diisi di dalam useEffect animasi)
+  const actionsRef = useRef({ open: () => {}, close: () => {} });
 
-  // Tema tetap dark di seluruh project.
+  // Tema: class `dark` di <html> sudah dipasang script inline di <head> sebelum paint.
+  // Efek ini hanya memastikan class sesuai preferensi tersimpan / sistem (idempoten).
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    try {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const dark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+      document.documentElement.classList.toggle('dark', dark);
+    } catch {
+      // localStorage diblokir: biarkan class apa adanya
+    }
   }, []);
 
   // Fungsi scroll halus ke puncak halaman
@@ -36,6 +46,9 @@ export default function Navbar() {
     if (!nav || !container || !full || !icon) return;
 
     let menuTl = null;
+    // Posisi scroll saat menu dibuka manual lewat tombol menu (null = tidak dibuka manual).
+    // Selama pengguna belum scroll jauh dari posisi ini, menu tidak otomatis menutup lagi.
+    let pinnedY = null;
 
     // Mengukur lebar container tengah untuk salah satu mode (tanpa terlihat di layar)
     const measureWidth = (showFull) => {
@@ -193,7 +206,11 @@ export default function Navbar() {
       const isAtTop = scrollY < 120;
       const isNearBottom = (windowHeight + scrollY) >= (documentHeight - 120);
 
-      if (isAtTop || isNearBottom) {
+      // Menu yang dibuka manual dilepas lagi kalau pengguna sudah scroll cukup jauh
+      if (pinnedY !== null && Math.abs(scrollY - pinnedY) > 80) pinnedY = null;
+      const keepOpen = pinnedY !== null;
+
+      if (isAtTop || isNearBottom || keepOpen) {
         expandMenu();
       } else {
         collapseMenu();
@@ -210,6 +227,23 @@ export default function Navbar() {
         if (instant) moveY.tween?.progress(1);
       }
     };
+
+    // Dipanggil tombol menu: buka menu lengkap walau posisi scroll di tengah halaman
+    actionsRef.current.open = () => {
+      pinnedY = window.scrollY;
+      expandMenu();
+    };
+    // Dipanggil setelah memilih menu / klik di luar navbar: kembali ke aturan scroll biasa
+    actionsRef.current.close = () => {
+      if (pinnedY === null) return;
+      pinnedY = null;
+      syncScrollState();
+    };
+
+    const onOutsidePointer = (e) => {
+      if (pinnedY !== null && !nav.contains(e.target)) actionsRef.current.close();
+    };
+    document.addEventListener('pointerdown', onOutsidePointer);
 
     // 4. Listener Scroll dengan inisialisasi dari posisi scroll yang sedang aktif.
     // Mount: instan, supaya refresh di tengah halaman tidak memutar animasi navbar
@@ -232,6 +266,8 @@ export default function Navbar() {
       clearTimeout(mountTimer);
       window.__navReady = false;
       window.removeEventListener('scroll:restored', onRestored);
+      document.removeEventListener('pointerdown', onOutsidePointer);
+      actionsRef.current = { open: () => {}, close: () => {} };
       st.kill();
       if (menuTl) menuTl.kill();
       gsap.killTweensOf([nav, full, icon, container]);
@@ -266,7 +302,10 @@ export default function Navbar() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setActiveTab(item.id)}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      actionsRef.current.close();
+                    }}
                     className={`h-6 md:h-7.5 px-1.5 md:px-3 text-[10px] md:text-xs font-medium rounded-[3px] transition-all duration-300 whitespace-nowrap ${
                       isActive
                         ? 'text-[#1c1c1e] border border-[#b0b0b8] bg-[#f2f2f7] shadow-xs dark:text-white dark:border-neutral-300/90 dark:bg-[#3a3a3a]/90'
@@ -279,11 +318,13 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* Hamburger Icon */}
+            {/* Hamburger Icon: klik untuk membuka menu lengkap saat navbar menutup */}
             <div ref={iconMenuRef} className="hidden items-center justify-center origin-center">
               <button 
-                aria-label="Menu"
-                className="h-6 md:h-7.5 w-7 md:w-8 flex items-center justify-center text-[#1c1c1e] bg-[#f2f2f7] dark:text-white dark:bg-[#3a3a3a]/90 rounded-[3px] border border-[#b0b0b8] dark:border-neutral-300/90"
+                type="button"
+                aria-label="Open menu"
+                onClick={() => actionsRef.current.open()}
+                className="h-6 md:h-7.5 w-7 md:w-8 flex items-center justify-center text-[#1c1c1e] bg-[#f2f2f7] dark:text-white dark:bg-[#3a3a3a]/90 rounded-[3px] border border-[#b0b0b8] dark:border-neutral-300/90 cursor-pointer"
               >
                 <svg className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" viewBox="0 0 24 24">
                   <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
