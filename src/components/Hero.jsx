@@ -134,7 +134,8 @@ export default function Hero() {
     const onResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      if (w !== lastW || Math.abs(h - lastH) > Math.max(160, lastH * 0.2)) {
+      // lebar berubah kecil (mis. scrollbar muncul/hilang) juga diabaikan
+      if (Math.abs(w - lastW) > 40 || Math.abs(h - lastH) > Math.max(160, lastH * 0.2)) {
         lastW = w;
         lastH = h;
         apply();

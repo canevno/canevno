@@ -62,10 +62,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html.is-loading {
-  overflow: hidden;
-}
-
 .hero-to-about-mask {
   background: linear-gradient(
     to top,

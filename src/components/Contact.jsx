@@ -1,5 +1,12 @@
 import { useState } from 'react';
 
+const OWNER_EMAIL = 'evandaprilliano@gmail.com';
+
+// Access key dari https://web3forms.com (gratis). Cukup daftar dengan Gmail di atas,
+// kunci dikirim ke email itu. Kunci ini memang publik, aman ditaruh di front-end.
+// Jika kunci dikosongkan, tombol Send membuka compose Gmail (cadangan).
+const WEB3FORMS_KEY = '7761898b-fe0e-4fbe-a306-f2101dc51387';
+
 const columns = [
   {
     title: 'Main Pages',
@@ -9,20 +16,6 @@ const columns = [
       { label: 'Project', href: '#project' },
       { label: 'Gallery', href: '#gallery' },
       { label: 'Contact Me', href: '#contact' },
-    ],
-  },
-  {
-    title: 'CMS Pages',
-    links: [
-      { label: 'Work Details', href: '#work-details' },
-      { label: 'Blog Details', href: '#blog-details' },
-    ],
-  },
-  {
-    title: 'Utility Pages',
-    links: [
-      { label: '404', href: '#404' },
-      { label: 'Coming Soon', href: '#coming-soon' },
     ],
   },
   {
@@ -53,8 +46,8 @@ const contacts = [
   },
   {
     icon: 'mail',
-    value: 'evandaprilliano@gmail.com',
-    href: 'mailto:evandaprilliano@gmail.com',
+    value: OWNER_EMAIL,
+    href: `mailto:${OWNER_EMAIL}`,
     note: 'Gmail',
   },
 ];
@@ -154,6 +147,26 @@ const styles = `
   border-radius: 999px;
   background: #414141;
 }
+.gl-msg {
+  display: block;
+  width: 100%;
+  margin-top: calc(var(--u) * 14);
+  min-height: max(84px, calc(var(--u) * 84));
+  padding: max(14px, calc(var(--u) * 14)) max(18px, calc(var(--u) * 18));
+  border: 0;
+  border-radius: max(22px, calc(var(--u) * 22));
+  outline: 0;
+  resize: vertical;
+  background: #414141;
+  color: #fff;
+  font: inherit;
+  font-size: max(14px, calc(var(--u) * 12.5));
+  font-weight: 500;
+  line-height: 1.4;
+}
+.gl-msg::placeholder { color: #fff; opacity: 1; }
+.gl-msg + .gl-form { margin-top: calc(var(--u) * 10); }
+.gl-btn:disabled { opacity: .6; cursor: default; }
 .gl-input {
   flex: 1;
   min-width: 0;
@@ -198,7 +211,7 @@ const styles = `
 @media (min-width: 640px) { .gl-nav { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 1024px) {
   .gl-nav {
-    grid-template-columns: 164fr 164fr 167fr 199fr 163fr 199fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
     margin-top: calc(var(--u) * 40);
   }
@@ -231,14 +244,74 @@ const styles = `
 
 export default function Contact() {
   const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | fallback | error
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = (e) => {
+  const openGmailCompose = (visitor, text) => {
+    const subject = 'Portfolio inquiry';
+    const body = `Email: ${visitor}\n\n${text}`;
+    const url =
+      'https://mail.google.com/mail/?view=cm&fs=1' +
+      `&to=${encodeURIComponent(OWNER_EMAIL)}` +
+      `&su=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!win) {
+      window.location.href = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    // TODO: sambungkan ke endpoint newsletter kamu
-    setSent(true);
-    setEmail('');
+    const visitor = email.trim();
+    const text = message.trim();
+    if (!visitor || !text || status === 'sending') return;
+
+    // Belum ada access key: pakai compose Gmail sebagai cadangan
+    if (!WEB3FORMS_KEY || WEB3FORMS_KEY.startsWith('ISI_')) {
+      openGmailCompose(visitor, text);
+      setStatus('fallback');
+      return;
+    }
+
+    setStatus('sending');
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: 'Portfolio inquiry',
+          from_name: 'Portfolio Website',
+          email: visitor,
+          message: text,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setStatus('sent');
+        setEmail('');
+        setMessage('');
+      } else {
+        // Tampilkan alasan dari Web3Forms (mis. kunci salah / domain tidak diizinkan)
+        console.error('Web3Forms error:', res.status, data);
+        setErrorMsg(data.message || `HTTP ${res.status}`);
+        setStatus('error');
+      }
+    } catch (err) {
+      console.error('Web3Forms request failed:', err);
+      setErrorMsg(err?.message || 'Network error');
+      setStatus('error');
+    }
+  };
+
+  const hints = {
+    idle: 'Send your email and message, and I will reply soon.',
+    sending: 'Sending...',
+    sent: 'Message sent! Thank you, I will reply soon.',
+    fallback: 'Opening Gmail... press Send there to deliver your message.',
+    error: `Failed to send (${errorMsg}). Please try again or email ${OWNER_EMAIL}.`,
   };
 
   return (
@@ -257,30 +330,47 @@ export default function Contact() {
           </div>
 
           <div className="gl-news">
-            <h3 className="gl-news-title">Subscribe to Our Newsletter</h3>
-            <form className="gl-form" onSubmit={handleSubmit}>
-              <label htmlFor="newsletter-email" style={{ position: 'absolute', left: -9999 }}>
-                Email
+            <h3 className="gl-news-title">Send me a message</h3>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="contact-message" style={{ position: 'absolute', left: -9999 }}>
+                Message
               </label>
-              <input
-                id="newsletter-email"
-                className="gl-input"
-                type="email"
+              <textarea
+                id="contact-message"
+                className="gl-msg"
                 required
-                value={email}
+                rows={3}
+                value={message}
                 onChange={(e) => {
-                  setEmail(e.target.value);
-                  setSent(false);
+                  setMessage(e.target.value);
+                  if (status !== 'sending') setStatus('idle');
                 }}
-                placeholder="Enter your email"
+                placeholder="Write your message"
               />
-              <button type="submit" className="gl-btn">
-                Subscribe
-                <ArrowUpRight />
-              </button>
+              <div className="gl-form">
+                <label htmlFor="newsletter-email" style={{ position: 'absolute', left: -9999 }}>
+                  Email
+                </label>
+                <input
+                  id="newsletter-email"
+                  className="gl-input"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (status !== 'sending') setStatus('idle');
+                  }}
+                  placeholder="Enter your email"
+                />
+                <button type="submit" className="gl-btn" disabled={status === 'sending'}>
+                  {status === 'sending' ? 'Sending' : 'Send'}
+                  <ArrowUpRight />
+                </button>
+              </div>
             </form>
             <p className="gl-hint" role="status">
-              {sent ? 'Thanks for subscribing!' : 'No spam. Just great content.'}
+              {hints[status]}
             </p>
           </div>
         </div>

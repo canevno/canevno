@@ -2,11 +2,13 @@ import { useState } from 'react';
 
 const heading = 'Pengalaman Projek';
 const subheading = 'Website dan aplikasi yang pernah saya kerjakan.';
-const buttonLabel = 'Hubungi Saya';
+const buttonLabel = 'Lihat langsung';
 
 /*
   Isi tiap projek, diambil dari CV. Taruh gambar di public/image/projects/.
   Jika gambar belum ada, area gambar otomatis disembunyikan.
+  href: ganti dengan alamat projek yang sudah online (https://...).
+        Alamat eksternal otomatis dibuka di tab baru.
 */
 const services = [
   {
@@ -99,6 +101,11 @@ const services = [
   },
 ];
 
+const isExternal = (href) => /^https?:\/\//.test(href);
+
+const canHover = () =>
+  typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(hover: hover)').matches;
+
 function ArrowUpRight() {
   return (
     <svg
@@ -135,7 +142,7 @@ const styles = `
   scroll-margin-top: 80px;
 }
 
-/* Judul */
+/* ---------- Judul ---------- */
 .pj-head {
   text-align: center;
   padding: max(24px, calc(var(--u) * 14)) 20px max(26px, calc(var(--u) * 26));
@@ -155,7 +162,7 @@ const styles = `
   color: #77736E;
 }
 
-/* Daftar */
+/* ---------- Daftar & baris ---------- */
 .pj-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid #85817B; }
 
 .pj-row {
@@ -178,6 +185,9 @@ const styles = `
   font-size: max(12px, calc(var(--u) * 10));
   line-height: 1;
 }
+
+/* Blok kategori + judul */
+.pj-block { grid-column: 2; grid-row: 1; }
 .pj-cat {
   display: block;
   font-size: max(12px, calc(var(--u) * 7.5));
@@ -194,10 +204,7 @@ const styles = `
   letter-spacing: -0.01em;
 }
 
-/* Blok kategori + judul */
-.pj-block { grid-column: 2; grid-row: 1; }
-
-/* Tombol */
+/* ---------- Tombol ---------- */
 .pj-action { grid-column: 2; margin-top: max(16px, calc(var(--u) * 14)); }
 .pj-btn {
   display: inline-flex;
@@ -218,7 +225,7 @@ const styles = `
   transition: background-color 0.2s;
 }
 .pj-btn:hover { background: #E03A2E; }
-.pj-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.pj-btn:focus-visible { outline: 2px solid #FF493D; outline-offset: 3px; }
 .pj-arrow {
   width: max(13px, calc(var(--u) * 9));
   height: max(13px, calc(var(--u) * 9));
@@ -226,7 +233,7 @@ const styles = `
 }
 .pj-btn:hover .pj-arrow { transform: translate(2px, -2px); }
 
-/* Gambar (muncul saat terbuka) */
+/* ---------- Gambar (muncul saat terbuka) ---------- */
 .pj-media {
   grid-column: 1 / -1;
   display: grid;
@@ -248,7 +255,7 @@ const styles = `
 .pj-row[data-open='true'] .pj-photo { opacity: 1; transition-delay: 0.12s; }
 .pj-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
-/* Panel isi (muncul saat terbuka) */
+/* ---------- Panel isi (muncul saat terbuka) ---------- */
 .pj-panel {
   grid-column: 1 / -1;
   display: grid;
@@ -273,6 +280,7 @@ const styles = `
 .pj-count b { font-size: max(30px, calc(var(--u) * 24)); font-weight: 600; line-height: 1; }
 .pj-count span { font-size: max(20px, calc(var(--u) * 15)); font-weight: 400; line-height: 1; }
 .pj-desc { margin: max(8px, calc(var(--u) * 7)) 0 0; font-size: max(13px, calc(var(--u) * 8.5)); line-height: 1.3; }
+
 .pj-cards { display: grid; grid-template-columns: 1fr; gap: max(8px, calc(var(--u) * 9)); margin-top: max(16px, calc(var(--u) * 15)); }
 .pj-card {
   display: flex;
@@ -288,7 +296,7 @@ const styles = `
 }
 @media (min-width: 768px) { .pj-cards { grid-template-columns: repeat(3, 1fr); } }
 
-/* Desktop: tiga kolom, gambar di kiri, tombol di kanan atas */
+/* ---------- Desktop: tiga kolom, gambar di kiri, tombol di kanan atas ---------- */
 @media (min-width: 640px) {
   .pj-row { grid-template-columns: 39.7% 1fr auto; column-gap: 0; align-items: center; }
   .pj-action { grid-column: 3; grid-row: 1; margin-top: 0; justify-self: end; }
@@ -312,9 +320,6 @@ const styles = `
 }
 `;
 
-const canHover = () =>
-  typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(hover: hover)').matches;
-
 export default function Project() {
   const [active, setActive] = useState(null);
 
@@ -330,6 +335,8 @@ export default function Project() {
       <ul className="pj-list" onMouseLeave={() => canHover() && setActive(null)}>
         {services.map((item, i) => {
           const open = active === i;
+          const external = isExternal(item.href);
+
           return (
             <li
               key={item.number}
@@ -352,7 +359,12 @@ export default function Project() {
               </div>
 
               <div className="pj-action">
-                <a href={item.href} className="pj-btn">
+                <a
+                  href={item.href}
+                  className="pj-btn"
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noreferrer' : undefined}
+                >
                   {buttonLabel}
                   <ArrowUpRight />
                 </a>

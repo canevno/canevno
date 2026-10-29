@@ -6,7 +6,6 @@ import Project from '../components/Project';
 import Technology from '../components/Technology';
 import Gallery from '../components/Gallery';
 import Contact from '../components/Contact';
-import Cursor from '../components/Cursor.astro';
 import '../styles/global.css';
 ---
 
@@ -51,11 +50,15 @@ import '../styles/global.css';
     </style>
   </head>
   <body class="w-full min-h-screen bg-[#EBECEE] dark:bg-black text-[#06151E] dark:text-white transition-colors duration-[400ms] overflow-x-hidden selection:bg-[#06151E] selection:text-white dark:selection:bg-white dark:selection:text-black">
-    <Cursor />
     <Navbar client:load />
 
     <main class="relative w-full" id="main-content">
-      <div id="stage" class="relative w-full h-[100dvh] overflow-visible">
+      <!--
+        Tinggi hero diatur oleh Hero itu sendiri (dibekukan dari tinggi layar saat dimuat).
+        Pembungkus ini sengaja TIDAK memakai h-[100dvh]: dvh berubah saat toolbar browser
+        muncul/hilang dan membuat hero ikut membesar/mengecil.
+      -->
+      <div id="stage" class="relative w-full overflow-visible">
         <Hero client:load />
       </div>
 
@@ -71,13 +74,13 @@ import '../styles/global.css';
         <Technology client:load />
       </div>
 
-      <div id="gallery">
-        <Gallery />
+      <div>
+        <Gallery client:load />
       </div>
 
       <div class="h-6 md:h-8"></div>
-      <div id="contact">
-        <Contact />
+      <div>
+        <Contact client:load />
       </div>
     </main>
 
@@ -112,27 +115,16 @@ import '../styles/global.css';
       let disposed = false;
 
       const mm = gsap.matchMedia();
-      const stage = document.getElementById('stage');
 
-      if (stage) {
-        mm.add('(max-width: 767px)', () => {
-        });
+      // Hero TIDAK lagi di-pin. Sebelumnya hero di-pin sepanjang 60% tinggi layar
+      // (pin: true, end: '+=60%'): selama itu halaman terasa macet karena hero diam di tempat,
+      // padahal hero sudah statis dan tidak ada animasi yang berjalan selama pin.
+      // Pin juga mengunci ukuran stage sehingga ikut berubah saat tinggi layar berubah.
 
-        mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
-          ScrollTrigger.create({
-            trigger: stage,
-            start: 'top top',
-            end: '+=60%',
-            pin: true,
-            refreshPriority: 1,
-          });
-        });
-
-        mm.add('(prefers-reduced-motion: reduce)', () => {
-          lenis.destroy();
-          lenisAlive = false;
-        });
-      }
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        lenis.destroy();
+        lenisAlive = false;
+      });
 
       initLandingAnimations();
 
@@ -235,7 +227,7 @@ import '../styles/global.css';
         ScrollTrigger.getAll().forEach((st) => st.getTween()?.progress(1));
         window.dispatchEvent(new Event('scroll:restored'));
 
-        if (lenisAlive && !html.classList.contains('is-loading')) lenis.start();
+        if (lenisAlive) lenis.start();
 
         restored = true;
         requestAnimationFrame(() => {
