@@ -4,7 +4,7 @@ const title = 'EVAND';
 const descriptionLines = [
   'A kid who wants to grow every day,',
   'and seeks good, positive relationships',
-  'across various school organizations.',
+  'across Passus, Pramuka, PMR, and OSIS.',
 ];
 const portraitPoster = '/image/imagehero.webp'; // tampil sebelum video siap / cadangan
 const portraitVideo = ''; // sementara kosong = pakai gambar. Nanti isi: '/video/herovideo.mp4' (video 3 detik, berulang)

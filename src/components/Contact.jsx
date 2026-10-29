@@ -37,7 +37,7 @@ const columns = [
     links: [
       { label: 'Instagram', href: 'https://instagram.com/evandaprilliano' },
       { label: 'Facebook', href: 'https://facebook.com' },
-      { label: 'GitHub', href: 'https://github.com' },
+      { label: 'GitHub', href: 'https://github.com/canevno' },
       { label: 'LinkedIn', href: 'https://linkedin.com' },
       { label: 'TikTok', href: 'https://tiktok.com' },
     ],
@@ -250,7 +250,7 @@ export default function Contact() {
           <div>
             <p className="gl-logo">Portofolio</p>
             <p className="gl-desc">
-              I&apos;m a programmer, UI/UX designer, and frontend developer. Let&apos;s
+              I&apos;m a Junior Developer and Graphic Designer. Let&apos;s
               collaborate and build a great partnership together. Reach out to me through the
               platforms below.
             </p>

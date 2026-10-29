@@ -7,7 +7,6 @@ import Technology from '../components/Technology';
 import Gallery from '../components/Gallery';
 import Contact from '../components/Contact';
 import Cursor from '../components/Cursor.astro';
-import Preloader from '../components/Preloader.astro';
 import '../styles/global.css';
 ---
 
@@ -22,14 +21,10 @@ import '../styles/global.css';
       (function () {
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         try {
-          var seen = localStorage.getItem('pl-seen') === '1';
-          var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           var raw = sessionStorage.getItem('scroll-pos');
           var savedR = raw ? JSON.parse(raw).r : 0;
-          if ((seen || reduce) && (location.hash.length > 1 || savedR > 0)) {
+          if (location.hash.length > 1 || savedR > 0) {
             document.documentElement.classList.add('is-restoring');
-            // Pengaman terakhir saja (mis. script utama gagal dimuat). Penutup normalnya
-            // dilepas oleh restoreScroll() setelah posisi dipulihkan.
             setTimeout(function () {
               document.documentElement.classList.remove('is-restoring');
             }, 8000);
@@ -39,8 +34,6 @@ import '../styles/global.css';
       })();
     </script>
     <style is:inline>
-      /* !important wajib: playHeroAnimations() memakai gsap autoAlpha yang menulis
-         visibility inline pada #main-content dan akan mengalahkan aturan ini. */
       html.is-restoring main,
       html.is-restoring [data-site-nav] { visibility: hidden !important; }
       html.is-restoring *,
@@ -58,37 +51,30 @@ import '../styles/global.css';
     </style>
   </head>
   <body class="w-full min-h-screen bg-[#EBECEE] dark:bg-black text-[#06151E] dark:text-white transition-colors duration-[400ms] overflow-x-hidden selection:bg-[#06151E] selection:text-white dark:selection:bg-white dark:selection:text-black">
-    <Preloader />
     <Cursor />
     <Navbar client:load />
 
     <main class="relative w-full" id="main-content">
-      <!-- 1. HERO -->
-      <div id="stage" class="relative w-full min-h-[100dvh] h-auto overflow-visible">
+      <div id="stage" class="relative w-full h-[100dvh] overflow-visible">
         <Hero client:load />
       </div>
 
-      <!-- 2. ABOUT -->
       <div id="about">
         <About />
       </div>
 
-      <!-- 3. PROJECT SECTION -->
       <div id="project">
         <Project />
       </div>
 
-      <!-- 4. TECHNOLOGY SECTION -->
       <div id="technology">
         <Technology client:load />
       </div>
 
-      <!-- 5. GALLERY SECTION -->
       <div id="gallery">
         <Gallery />
       </div>
 
-      <!-- 6. CONTACT SECTION -->
       <div class="h-6 md:h-8"></div>
       <div id="contact">
         <Contact />
@@ -104,24 +90,22 @@ import '../styles/global.css';
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.config({ ignoreMobileResize: true });
 
-      const w = window as any;
+      const w = window;
       const html = document.documentElement;
 
       if (typeof w.__cleanupStage === 'function') w.__cleanupStage();
 
-      // ===== 1. SMOOTH SCROLL =====
       const lenis = new Lenis({
         lerp: 0.1,
         smoothWheel: true,
       });
       w.__lenis = lenis;
 
-      const tick = (time: number) => lenis.raf(time * 1000);
+      const tick = (time) => lenis.raf(time * 1000);
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add(tick);
       gsap.ticker.lagSmoothing(0);
 
-      // ===== 2. PIN HERO =====
       const SCROLL_KEY = 'scroll-pos';
       let restored = false;
       let lenisAlive = true;
@@ -132,8 +116,6 @@ import '../styles/global.css';
 
       if (stage) {
         mm.add('(max-width: 767px)', () => {
-          // Mobile: hindari pin hero yang membuat gerak terasa kasar dan terlalu berat.
-          // Biarkan hero tetap di alur normal scroll agar transisi lebih mulus.
         });
 
         mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
@@ -152,15 +134,9 @@ import '../styles/global.css';
         });
       }
 
-      // Jalankan animasi utama proyek Anda
       initLandingAnimations();
-      playHeroAnimations();
 
-      // ===== 3. SIMPAN POSISI SCROLL =====
-      const preloaderRunning =
-        !html.classList.contains('pl-preloader-hidden') && !!document.getElementById('preloader');
-
-      const readSaved = (): number | null => {
+      const readSaved = () => {
         try {
           const raw = sessionStorage.getItem(SCROLL_KEY);
           if (!raw) return null;
@@ -195,11 +171,10 @@ import '../styles/global.css';
       window.addEventListener('pagehide', onPageHide);
       document.addEventListener('visibilitychange', onVisibility);
 
-      // ===== 4. TENTUKAN TARGET SCROLL =====
-      const getTarget = (): number => {
+      const getTarget = () => {
         const hash = location.hash;
         if (hash.length > 1) {
-          let el: Element | null = null;
+          let el = null;
           try {
             el = document.querySelector(hash);
           } catch {
@@ -207,21 +182,18 @@ import '../styles/global.css';
           }
           if (el) return Math.max(0, el.getBoundingClientRect().top + window.scrollY - 64);
         }
-        if (!preloaderRunning) {
-          const r = readSaved();
-          if (r !== null) return r * window.innerHeight;
-        }
+        const r = readSaved();
+        if (r !== null) return r * window.innerHeight;
         return 0;
       };
 
-      // ===== 5. RESTORE SCROLL =====
-      const pageLoaded = new Promise<void>((resolve) => {
+      const pageLoaded = new Promise((resolve) => {
         if (document.readyState === 'complete') resolve();
         else window.addEventListener('load', () => resolve(), { once: true });
       });
-      const fontsReady: Promise<unknown> = (document as any).fonts?.ready ?? Promise.resolve();
-      const waitFor = (cond: () => boolean, max = 2000) =>
-        new Promise<void>((resolve) => {
+      const fontsReady = document.fonts?.ready ?? Promise.resolve();
+      const waitFor = (cond, max = 2000) =>
+        new Promise((resolve) => {
           const t0 = performance.now();
           const poll = () => {
             if (disposed || cond() || performance.now() - t0 >= max) resolve();
@@ -229,9 +201,9 @@ import '../styles/global.css';
           };
           poll();
         });
-      const nextFrames = (n: number) =>
-        new Promise<void>((resolve) => {
-          const step = (i: number) => (i <= 0 ? resolve() : requestAnimationFrame(() => step(i - 1)));
+      const nextFrames = (n) =>
+        new Promise((resolve) => {
+          const step = (i) => (i <= 0 ? resolve() : requestAnimationFrame(() => step(i - 1)));
           step(n);
         });
 
@@ -251,8 +223,6 @@ import '../styles/global.css';
         const target = getTarget();
         if (lenisAlive) {
           try {
-            // Dimensi Lenis di-debounce 250 ms, jadi limit-nya bisa masih memakai tinggi
-            // dokumen lama dan memotong target (mendarat di atas section tujuan).
             lenis.resize();
             lenis.scrollTo(target, { immediate: true, force: true });
           } catch {
@@ -279,24 +249,16 @@ import '../styles/global.css';
         if (!disposed) ScrollTrigger.refresh();
       });
 
-      const onPreloaderDone = () => {
-        if (lenisAlive) lenis.start();
-        ScrollTrigger.refresh();
-      };
-      window.addEventListener('preloader:done', onPreloaderDone);
-
-      const onPageShow = (e: PageTransitionEvent) => {
+      const onPageShow = (e) => {
         if (e.persisted) ScrollTrigger.refresh();
       };
       window.addEventListener('pageshow', onPageShow);
 
-      // ===== 6. CLEANUP =====
       w.__cleanupStage = () => {
         disposed = true;
         clearTimeout(failsafe);
         clearTimeout(saveT);
         window.removeEventListener('pageshow', onPageShow);
-        window.removeEventListener('preloader:done', onPreloaderDone);
         window.removeEventListener('pagehide', onPageHide);
         window.removeEventListener('scroll', onNativeScroll);
         document.removeEventListener('visibilitychange', onVisibility);

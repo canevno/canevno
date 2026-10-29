@@ -4,6 +4,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Di HP, bar alamat browser muncul/hilang saat scroll dan mengubah tinggi layar.
+// Abaikan resize jenis itu supaya ScrollTrigger tidak menghitung ulang layout saat scroll.
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 function initThemeToggle() {
     const toggleBtn = document.getElementById("theme-toggle");
     const toggleBtnMobile = document.getElementById("theme-toggle-mobile");
@@ -57,21 +61,22 @@ function initNavIndicator() {
     const navLinks = [...navContainer.querySelectorAll(".nav-link")];
     if (!navLinks.length) return;
 
+    // Efek teks bergulir saat hover. Tinggi teks dibaca saat hover (bukan sekali di awal),
+    // jadi tetap benar walaupun font baru selesai dimuat setelah init.
     navLinks.forEach((link) => {
         const track = link.querySelector(".nav-track");
-        if (!track) return;
+        if (!track || !track.children[0]) return;
 
-        const textHeight = track.children[0].offsetHeight;
+        const roll = (toEnd) =>
+            gsap.to(track, {
+                y: toEnd ? -track.children[0].offsetHeight : 0,
+                duration: 0.18,
+                ease: "power3.out",
+                overwrite: "auto",
+            });
 
-        const tl = gsap.timeline({
-            paused: true,
-            defaults: { duration: 0.18, ease: "power3.out" },
-        });
-
-        tl.to(track, { y: -textHeight });
-
-        link.addEventListener("mouseenter", () => tl.play());
-        link.addEventListener("mouseleave", () => tl.reverse());
+        link.addEventListener("mouseenter", () => roll(true));
+        link.addEventListener("mouseleave", () => roll(false));
     });
 
     const sections = navLinks
@@ -116,6 +121,9 @@ function initNavIndicator() {
         }
     };
 
+    // Hanya warna yang berubah. Sebelumnya link aktif juga diberi font-semibold, yang membuat
+    // lebar teks (dan lebar navbar) berubah setiap pindah section, sehingga layout bergeser
+    // dan indikator mengukur lebar sebelum teksnya berubah.
     const setActiveStyles = (link) => {
         navLinks.forEach((item) => {
             item.querySelectorAll(".nav-track span").forEach((span) => {
@@ -126,7 +134,7 @@ function initNavIndicator() {
 
         link.querySelectorAll(".nav-track span").forEach((span) => {
             span.classList.remove("text-white");
-            span.classList.add("text-blue-950", "dark:text-blue-900", "font-semibold");
+            span.classList.add("text-blue-950", "dark:text-blue-900");
         });
     };
 
@@ -134,14 +142,16 @@ function initNavIndicator() {
         if (!link || link === activeLink) return;
 
         activeLink = link;
-        moveIndicatorTo(link, animate);
+        // Terapkan gaya dulu, baru ukur posisi indikator.
         setActiveStyles(link);
         navLinks.forEach((l) => l.classList.toggle("is-active", l === link));
+        moveIndicatorTo(link, animate);
     };
 
     const getReferenceLine = () => {
         const navHeight = navBar?.offsetHeight || 64;
-        return navHeight + window.innerHeight * 0.35;
+        // clientHeight stabil saat bar alamat HP muncul/hilang, tidak seperti innerHeight.
+        return navHeight + document.documentElement.clientHeight * 0.35;
     };
 
     const updateActiveSection = () => {
@@ -189,10 +199,19 @@ function initNavIndicator() {
         { passive: true }
     );
 
+    // Hanya hitung ulang jika LEBAR berubah. Perubahan tinggi (bar alamat HP) diabaikan.
+    let lastWidth = window.innerWidth;
     window.addEventListener("resize", () => {
+        if (window.innerWidth === lastWidth) return;
+        lastWidth = window.innerWidth;
         moveIndicatorTo(activeLink, false);
         updateActiveSection();
     });
+
+    // Jika lebar navbar berubah karena sebab lain (font selesai dimuat, dll), indikator ikut menyesuaikan.
+    if ("ResizeObserver" in window) {
+        new ResizeObserver(() => moveIndicatorTo(activeLink, false)).observe(navContainer);
+    }
 
     const syncIndicatorNow = () => {
         updateActiveSection();
@@ -221,12 +240,17 @@ function initLoginButtonHover() {
     if (!loginTexts.length) return;
 
     loginTexts.forEach((textEl) => {
+        // Cegah dipasang dua kali: panggilan kedua akan membaca teks yang sudah digandakan
+        // (hurufnya jadi dobel) dan menambah listener hover kedua.
+        if (textEl.dataset.splitReady === "true") return;
+
         const button = textEl.closest("a");
         if (!button) return;
 
         const label = textEl.dataset.text || textEl.textContent.trim();
         if (!label) return;
 
+        textEl.dataset.splitReady = "true";
         textEl.innerHTML = "";
         const tracks = [];
 
@@ -260,10 +284,6 @@ function initLoginButtonHover() {
     });
 }
 
-document.fonts.ready.then(() => {
-    initLoginButtonHover();
-});
-
 function initNavFade() {
     const items = document.querySelectorAll(".nav-fade-item");
 
@@ -274,6 +294,7 @@ function initNavFade() {
                     opacity: other === item ? 1 : 0.45,
                     duration: 0.25,
                     ease: "power2.out",
+                    overwrite: "auto",
                 });
             });
         });
@@ -283,143 +304,12 @@ function initNavFade() {
                 opacity: 1,
                 duration: 0.25,
                 ease: "power2.out",
+                overwrite: "auto",
             });
         });
     });
 }
 
-function initPixelDivider() {
-    const dividers = document.querySelectorAll(".pixel-divider");
-    if (!dividers.length) return;
-
-    const cols = 36;
-    const rows = 2;
-    const accentChance = 0.08;
-    const totalDuration = 1.5;
-    const bandPerRow = totalDuration / rows;
-    const wildcardChance = 0.35;
-
-    const DEFAULTS = {
-        sectionLight: "#000000",
-        sectionDark: "#000000",
-        accentLight: "#E53935",
-        accentDark: "#E53935",
-        prevLight: "#FFFFFF",
-        prevDark: "#FFFFFF",
-    };
-
-    dividers.forEach((divider, index) => {
-        const config = {
-            sectionLight: divider.dataset.sectionLight || DEFAULTS.sectionLight,
-            sectionDark: divider.dataset.sectionDark || DEFAULTS.sectionDark,
-            accentLight: divider.dataset.accentLight || DEFAULTS.accentLight,
-            accentDark: divider.dataset.accentDark || DEFAULTS.accentDark,
-            prevLight: divider.dataset.prevLight || DEFAULTS.prevLight,
-            prevDark: divider.dataset.prevDark || DEFAULTS.prevDark,
-        };
-
-        divider.style.gridTemplateColumns = `repeat(${cols}, minmax(0,1fr))`;
-        divider.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-        divider.innerHTML = "";
-
-        const getSectionColor = () => {
-            const isDark = document.documentElement.classList.contains("dark");
-            return isDark ? config.sectionDark : config.sectionLight;
-        };
-
-        const getAccentColor = () => {
-            const isDark = document.documentElement.classList.contains("dark");
-            return isDark ? config.accentDark : config.accentLight;
-        };
-
-        const getPrevColor = () => {
-            const isDark = document.documentElement.classList.contains("dark");
-            return isDark ? config.prevDark : config.prevLight;
-        };
-
-        const pixels = [];
-
-        for (let i = 0; i < cols * rows; i++) {
-            const pixel = document.createElement("div");
-            const isAccent = Math.random() < accentChance;
-
-            // Skala awal di-set penuh (scale-100)
-            pixel.className = "scale-100 origin-center w-full h-full";
-            pixel.dataset.accent = isAccent ? "true" : "false";
-            pixel.style.backgroundColor = isAccent ? getAccentColor() : getSectionColor();
-
-            divider.appendChild(pixel);
-            pixels.push(pixel);
-        }
-
-        divider.style.backgroundColor = getPrevColor();
-
-        const syncSquareHeight = () => {
-            const width = divider.offsetWidth;
-            if (width > 0) {
-                const cellWidth = width / cols;
-                divider.style.height = `${cellWidth * rows}px`;
-            }
-        };
-
-        const ro = new ResizeObserver(() => {
-            syncSquareHeight();
-            ScrollTrigger.refresh();
-        });
-        ro.observe(divider);
-
-        const refreshPixelColors = () => {
-            const base = getSectionColor();
-            const accent = getAccentColor();
-
-            pixels.forEach((pixel) => {
-                const isAccent = pixel.dataset.accent === "true";
-                pixel.style.backgroundColor = isAccent ? accent : base;
-            });
-
-            divider.style.backgroundColor = getPrevColor();
-        };
-
-        const themeObserver = new MutationObserver(refreshPixelColors);
-        themeObserver.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ["class"],
-        });
-
-        // Animasi ke scale: 0 agar kotak menghilang saat scroll ke bawah
-        gsap.to(divider.children, {
-            scale: 0,
-            ease: "steps(1)",
-            stagger: (i) => {
-                const row = Math.floor(i / cols);
-
-                if (Math.random() < wildcardChance) {
-                    return Math.random() * totalDuration * 0.8;
-                }
-
-                const baseDelay = row * bandPerRow * 0.4;
-                const jitter = Math.random() * bandPerRow * 1.8;
-
-                return baseDelay + jitter;
-            },
-            scrollTrigger: {
-                id: `pixel-divider-${index}`,
-                trigger: divider,
-                start: "top 95%",
-                end: "bottom 5%",
-                scrub: 0.5,
-                invalidateOnRefresh: true,
-                onUpdate: (self) => {
-                    if (self.direction === -1) {
-                        gsap.set(divider.children, { transformOrigin: "bottom center" });
-                    } else {
-                        gsap.set(divider.children, { transformOrigin: "top center" });
-                    }
-                },
-            },
-        });
-    });
-}
 
 function initHorizontalScroll() {
     const wrapper = document.getElementById("horizontal-wrapper");
@@ -658,8 +548,15 @@ function initScrollTextReveal() {
         ScrollTrigger.refresh();
     });
 
+    // Pecah ulang teks HANYA jika lebar layar berubah. Di HP, resize karena bar alamat
+    // (tinggi saja) sebelumnya ikut memicu pecah ulang + refresh, yang membuat halaman
+    // melompat dan ukuran tampilan terlihat membesar/mengecil saat scroll.
+    let lastWidth = window.innerWidth;
     let resizeTimer;
     window.addEventListener("resize", () => {
+        if (window.innerWidth === lastWidth) return;
+        lastWidth = window.innerWidth;
+
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             build();
@@ -674,7 +571,6 @@ export function initLandingAnimations() {
     initNavFade();
     initHorizontalScroll();
     initFaqAccordion();
-    initPixelDivider();
     initScrollTextReveal();
 
     ScrollTrigger.refresh();
@@ -688,4 +584,5 @@ export function playHeroAnimations() {
         scale: 1,
         clearProps: "transform,opacity"
     });
+    // Hero tetap statis tanpa animasi masuk.
 }

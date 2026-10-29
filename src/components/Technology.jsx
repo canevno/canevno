@@ -13,6 +13,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 const DEVICON = 'https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/icons';
 const SIMPLE = 'https://cdn.simpleicons.org';
 
+const TITLE = 'KEMAMPUAN SAYA';
+// Ganti ke '#FFFFFF' kalau ingin putih bersih, bukan putih krem seperti section lain
+const BG = '#F3EFE8';
+
 const technologies = [
   {
     name: 'HTML',
@@ -34,13 +38,6 @@ const technologies = [
     description: 'Menambahkan interaksi dan perilaku dinamis pada website.',
     icon: `${DEVICON}/javascript/javascript-original.svg`,
     fallback: `${SIMPLE}/javascript/F7DF1E`,
-  },
-  {
-    name: 'React.js',
-    category: 'Frontend Library',
-    description: 'Membangun antarmuka pengguna berbasis komponen.',
-    icon: `${DEVICON}/react/react-original.svg`,
-    fallback: `${SIMPLE}/react/61DAFB`,
   },
   {
     name: 'Tailwind CSS',
@@ -71,33 +68,41 @@ const technologies = [
     fallback: `${SIMPLE}/laravel/FF2D20`,
   },
   {
-    name: 'MySQL',
-    category: 'Database',
-    description: 'Menyimpan dan mengelola data aplikasi.',
-    icon: `${DEVICON}/mysql/mysql-original.svg`,
-    fallback: `${SIMPLE}/mysql/4479A1`,
-  },
-  {
-    name: 'phpMyAdmin',
-    category: 'Database Management',
-    description: 'Mengelola database MySQL melalui antarmuka web.',
-    icon: `${DEVICON}/phpmyadmin/phpmyadmin-original.svg`,
-    fallback: `${SIMPLE}/phpmyadmin/6C78AF`,
-  },
-  {
-    name: 'GSAP',
-    category: 'Animation',
-    description: 'Membuat animasi web yang halus dan interaktif.',
-    // Devicon tidak punya logo GSAP, jadi langsung memakai Simple Icons.
-    icon: `${SIMPLE}/gsap/88CE02`,
+    name: 'Livewire',
+    category: 'Laravel Framework',
+    description: 'Membuat komponen web yang dinamis di Laravel.',
+    // Devicon tidak punya logo Livewire, jadi langsung memakai Simple Icons.
+    icon: `${SIMPLE}/livewire/FB70A9`,
     fallback: null,
   },
   {
-    name: 'Astro',
-    category: 'Web Framework',
-    description: 'Membangun website yang cepat dengan pendekatan berbasis komponen.',
-    icon: `${DEVICON}/astro/astro-original.svg`,
-    fallback: `${SIMPLE}/astro/FF5D01`,
+    name: 'Next.js',
+    category: 'React Framework',
+    description: 'Membangun website berbasis React yang cepat dan terstruktur.',
+    icon: `${DEVICON}/nextjs/nextjs-original.svg`,
+    fallback: `${SIMPLE}/nextdotjs/000000`,
+  },
+  {
+    name: 'Flutter',
+    category: 'Mobile Framework',
+    description: 'Membuat aplikasi mobile dengan satu basis kode.',
+    icon: `${DEVICON}/flutter/flutter-original.svg`,
+    fallback: `${SIMPLE}/flutter/02569B`,
+  },
+  {
+    name: 'Dart',
+    category: 'Programming',
+    description: 'Bahasa pemrograman yang digunakan untuk membangun aplikasi Flutter.',
+    icon: `${DEVICON}/dart/dart-original.svg`,
+    fallback: `${SIMPLE}/dart/0175C2`,
+  },
+  {
+    name: 'Framer Motion',
+    category: 'Animation',
+    description: 'Membuat animasi antarmuka yang halus pada website.',
+    // Devicon tidak punya logo Framer Motion, jadi langsung memakai Simple Icons.
+    icon: `${SIMPLE}/framer/0055FF`,
+    fallback: null,
   },
 ];
 
@@ -115,6 +120,20 @@ function handleLogoError(event, fallback, name) {
   mono.className = 'text-base font-bold text-[#111111]';
   img.replaceWith(mono);
 }
+
+// Gradasi huruf bergantian merah tua dan oranye-merah, sama seperti judul Hero.
+const titleStops = [
+  [0, '#4A0908'], [0.05, '#850D08'], [0.085, '#FF3215'], [0.125, '#FF590A'],
+  [0.14, '#4A0908'], [0.2, '#850D08'], [0.23, '#FF3215'], [0.29, '#FF590A'],
+  [0.31, '#7A1008'], [0.37, '#850D08'], [0.4, '#FF3215'], [0.455, '#FF590A'],
+  [0.48, '#FF3215'], [0.525, '#850D08'], [0.54, '#FF3215'], [0.6, '#FF590A'],
+  [0.62, '#4A0908'], [0.67, '#850D08'], [0.72, '#FF3215'], [0.775, '#FF590A'],
+  [0.79, '#FF3215'], [0.85, '#FF590A'], [0.865, '#4A0908'], [0.915, '#850D08'],
+  [0.93, '#FF3215'], [0.975, '#FF590A'], [1, '#850D08'],
+];
+const TITLE_FONT = "'Anton', 'Bebas Neue', Impact, 'Arial Narrow', sans-serif";
+
+const fontImport = `@import url('https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;500;600;700&display=swap');`;
 
 export default function Kemampuan() {
   const sectionRef = useRef(null);
@@ -164,48 +183,90 @@ export default function Kemampuan() {
       id="kemampuan"
       ref={sectionRef}
       aria-labelledby="kemampuan-title"
-      className="relative w-full bg-[#F3EFE8] px-5 py-20 text-[#111111] md:px-10 md:py-28 scroll-mt-20"
-      style={{ fontFamily: "'Manrope', 'Inter', system-ui, sans-serif" }}
+      className="relative w-full px-4 py-16 sm:px-5 sm:py-20 text-[#111111] md:px-10 md:py-28 scroll-mt-20"
+      style={{ background: BG, fontFamily: "'Outfit', 'Manrope', 'Inter', system-ui, sans-serif" }}
     >
+      <style>{fontImport}</style>
+
       <div className="mx-auto max-w-6xl">
         {/* HEADER */}
         <div className="mb-12 md:mb-16">
           <p
             data-tech-head
-            className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#666666]"
+            className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#77736E]"
           >
             Skillset
           </p>
-          <h2
-            id="kemampuan-title"
-            data-tech-head
-            className="text-[clamp(2.25rem,7vw,5.5rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.04em]"
-          >
-            Kemampuan Saya
+
+          {/* Judul gaya Hero: Anton besar, satu baris, gradasi merah-oranye per huruf */}
+          <h2 id="kemampuan-title" data-tech-head className="m-0">
+            <svg
+              viewBox="0 0 1000 150"
+              role="img"
+              aria-label="Kemampuan Saya"
+              className="block h-auto w-full select-none"
+              style={{ overflow: 'visible' }}
+            >
+              <defs>
+                <linearGradient id="kp-h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="0">
+                  {titleStops.map(([offset, color]) => (
+                    <stop key={offset} offset={offset} stopColor={color} />
+                  ))}
+                </linearGradient>
+                <linearGradient id="kp-v" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="150">
+                  <stop offset="0" stopColor="#000" stopOpacity="0" />
+                  <stop offset="1" stopColor="#2A0504" stopOpacity="0.35" />
+                </linearGradient>
+              </defs>
+              <text
+                x="0"
+                y="148"
+                fontSize="165"
+                textLength="1000"
+                lengthAdjust="spacingAndGlyphs"
+                fill="url(#kp-h)"
+                fontFamily={TITLE_FONT}
+              >
+                {TITLE}
+              </text>
+              <text
+                aria-hidden="true"
+                x="0"
+                y="148"
+                fontSize="165"
+                textLength="1000"
+                lengthAdjust="spacingAndGlyphs"
+                fill="url(#kp-v)"
+                fontFamily={TITLE_FONT}
+              >
+                {TITLE}
+              </text>
+            </svg>
           </h2>
+
           <p
             data-tech-head
-            className="mt-6 max-w-xl text-sm leading-7 text-[#666666] md:text-base"
+            className="mt-6 max-w-xl text-sm leading-7 text-[#77736E] md:text-base"
           >
-            Berbagai kemampuan dan teknologi yang saya gunakan untuk membangun
-            website modern, aplikasi yang rapi, serta pengalaman digital yang
-            cepat dan berkesan.
+            Front-end Development, Debugging, Problem Solving, Animation Editing,
+            Leadership, dan Graphic Design, didukung teknologi yang saya gunakan
+            dalam proyek web dan aplikasi.
           </p>
         </div>
 
         {/* GRID */}
         <ul
           data-tech-grid
-          className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 md:gap-4"
+          className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3 md:gap-4"
         >
           {technologies.map((tech) => (
             <li
               key={tech.name}
               data-tech-item
-              className="group flex h-full min-h-[184px] flex-col rounded-[10px] border border-[#D8D5CF] bg-white/40 p-5 transition-[transform,border-color,background-color] duration-[250ms] ease-out hover:-translate-y-1 hover:border-[#FF493D] hover:bg-white/70 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              className="group flex h-full min-h-[156px] flex-col rounded-[10px] border border-[#D8D5CF] bg-white/40 p-3.5 sm:min-h-[184px] sm:p-5 transition-[transform,border-color,background-color] duration-[250ms] ease-out hover:-translate-y-1 hover:border-[#FF493D] hover:bg-white/70 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             >
-              {/* Tile putih supaya logo gelap (mis. Astro) tetap terlihat jelas */}
-              <span className="mb-5 flex h-12 w-12 flex-none items-center justify-center rounded-lg border border-[#D8D5CF] bg-white">
+              {/* Tile putih supaya logo gelap (mis. Next.js) tetap terlihat jelas */}
+              <span className="mb-3 flex h-10 w-10 flex-none sm:mb-5 sm:h-12 sm:w-12 items-center justify-center rounded-lg border border-[#D8D5CF] bg-white">
                 <img
                   src={tech.icon}
                   alt={`Logo ${tech.name}`}
@@ -218,13 +279,13 @@ export default function Kemampuan() {
                 />
               </span>
 
-              <h3 className="text-lg font-semibold leading-tight transition-[font-weight,color] duration-[250ms] group-hover:font-bold">
+              <h3 className="break-words text-base font-semibold leading-tight sm:text-lg transition-[font-weight,color] duration-[250ms] group-hover:font-bold">
                 {tech.name}
               </h3>
-              <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#666666] transition-colors duration-[250ms] group-hover:text-[#FF493D]">
+              <p className="mt-1 break-words text-[10px] font-semibold uppercase tracking-[0.12em] sm:text-[11px] sm:tracking-[0.16em] text-[#77736E] transition-colors duration-[250ms] group-hover:text-[#FF493D]">
                 {tech.category}
               </p>
-              <p className="mt-3 text-sm leading-6 text-[#666666]">
+              <p className="mt-2 text-[13px] leading-5 text-[#77736E] sm:mt-3 sm:text-sm sm:leading-6">
                 {tech.description}
               </p>
             </li>

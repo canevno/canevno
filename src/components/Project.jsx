@@ -1,57 +1,101 @@
 import { useState } from 'react';
 
-const heading = 'What we offer / Service';
-const subheading = 'End to end solutions to build, grow and scale your brand.';
-const buttonLabel = 'Start your project';
+const heading = 'Pengalaman Projek';
+const subheading = 'Website dan aplikasi yang pernah saya kerjakan.';
+const buttonLabel = 'Hubungi Saya';
 
 /*
-  Isi tiap layanan. Angka, deskripsi, dan tag di bawah ini masih contoh,
-  ganti sesuai data aslimu. Taruh gambar di public/image/services/.
+  Isi tiap projek, diambil dari CV. Taruh gambar di public/image/projects/.
+  Jika gambar belum ada, area gambar otomatis disembunyikan.
 */
 const services = [
   {
     number: '01',
-    category: 'Marketing Service',
-    title: 'Digital Marketing',
+    category: 'Web Keuangan',
+    title: 'KengQud',
     href: '#contact',
-    image: '/image/services/digital-marketing.webp',
-    count: '28+',
+    image: '/image/projects/kengqud.webp',
+    count: '2025',
     description:
-      'Reach the right audience with data-driven campaigns across search, social, and email, built to turn attention into measurable results.',
-    tags: ['Social Media Ads', 'SEO & Content', 'Email Campaigns'],
+      'Website untuk membantu pengguna menghitung keuangan harian, lengkap dengan pengingat kebutuhan dan perhitungan diagram pengeluaran.',
+    tags: ['Kalkulasi Keuangan', 'Pengingat Kebutuhan', 'Diagram Pengeluaran'],
   },
   {
     number: '02',
-    category: 'Design Service',
-    title: 'Visual Identity',
+    category: 'Web CRUD',
+    title: 'Pengembangan CRUD',
     href: '#contact',
-    image: '/image/services/visual-identity.webp',
-    count: '41+',
+    image: '/image/projects/crud.webp',
+    count: '2025',
     description:
-      'Shape a look that people recognize instantly, from logo to layout, with a visual language that stays consistent everywhere.',
-    tags: ['Logo Design', 'Visual Language', 'Brand Guidelines'],
+      'Website CRUD yang mengandalkan Laravel dan Livewire, bertujuan membangun sistem berbasis CRUD.',
+    tags: ['Laravel', 'Livewire', 'Sistem CRUD'],
   },
   {
     number: '03',
-    category: 'Design Service',
-    title: 'Brand Strategy',
+    category: 'E-Commerce Baju Batik Nusantara',
+    title: 'JavaVidpa',
     href: '#contact',
-    image: '/image/services/brand-strategy.webp',
-    count: '34+',
+    image: '/image/projects/javavidpa.webp',
+    count: '2025',
     description:
-      'Streamline your workflows and nurture leads around the clock with intelligent, personalized communication systems.',
-    tags: ['Logo Design', 'Brand Identity System', 'Typography & Color System'],
+      'Website e-commerce dengan cara beli yang sederhana bagi pengguna, tampilan yang interaktif, dan diskon bulanan yang besar.',
+    tags: ['PHP', 'Tailwind CSS', 'Alpine.js'],
   },
   {
     number: '04',
-    category: 'Media Service',
-    title: 'Media Planning',
+    category: 'Website Portofolio',
+    title: 'Portofolio (Vercel.app)',
     href: '#contact',
-    image: '/image/services/media-planning.webp',
-    count: '19+',
+    image: '/image/projects/portofolio.webp',
+    count: '2025',
     description:
-      'Plan where and when your message appears, so every budget works harder across the channels your audience actually uses.',
-    tags: ['Channel Strategy', 'Budget Allocation', 'Campaign Reporting'],
+      'Website portofolio pertama saya yang dibuat menggunakan HTML, CSS, dan JavaScript.',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+  },
+  {
+    number: '05',
+    category: 'Web Penjualan Sepatu',
+    title: 'Zorieshoes',
+    href: '#contact',
+    image: '/image/projects/zorieshoes.webp',
+    count: '2026',
+    description:
+      'Website penjualan sepatu yang digunakan sebagai tugas akhir XI PPLG, dibuat dengan Laravel, PHP, Tailwind CSS, Alpine.js, dan Livewire.',
+    tags: ['Laravel', 'PHP', 'Tailwind CSS'],
+  },
+  {
+    number: '06',
+    category: 'Website Pramuka',
+    title: 'Pramuka SMK Negeri 1 Bangsri',
+    href: '#contact',
+    image: '/image/projects/pramuka.webp',
+    count: '2026',
+    description:
+      'Website untuk menampilkan prestasi dan kegiatan Pramuka KH. Acmad Fauzan & Dewi Sartika, dirancang oleh 2 orang dengan Framer Motion, Alpine.js, Next.js, Laravel, dan PHP.',
+    tags: ['Next.js', 'Laravel', 'Framer Motion'],
+  },
+  {
+    number: '07',
+    category: 'Sistem Pemesanan Barang',
+    title: 'Simpesan',
+    href: '#contact',
+    image: '/image/projects/simpesan.webp',
+    count: '2026',
+    description:
+      'Halaman aplikasi mobile sederhana untuk pemesanan barang, dibuat dengan Flutter dan Dart menggunakan sistem CRUD.',
+    tags: ['Flutter', 'Dart', 'Sistem CRUD'],
+  },
+  {
+    number: '08',
+    category: 'Desain',
+    title: 'Web & App Design',
+    href: '#contact',
+    image: '/image/projects/web-app-design.webp',
+    count: '2026',
+    description:
+      'Desain website Pramuka SMKN 1 Bangsri yang lengkap dengan dashboard admin yang dinamis, elegan, dan minimalis.',
+    tags: ['Dashboard Admin', 'Dinamis', 'Elegan & Minimalis'],
   },
 ];
 
@@ -85,7 +129,7 @@ const styles = `
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 0.6s;
   width: 100%;
-  background: #F3EFE8;
+  background: #ffffff;
   color: #111;
   font-family: 'Outfit', 'Manrope', 'Inter', system-ui, sans-serif;
   scroll-margin-top: 80px;
@@ -121,7 +165,7 @@ const styles = `
   column-gap: 8px;
   padding: max(20px, calc(var(--u) * 22)) max(16px, calc(var(--u) * 16)) max(22px, calc(var(--u) * 24)) max(18px, calc(var(--u) * 18));
   border-bottom: 1px solid #85817B;
-  background: #F3EFE8;
+  background: #ffffff;
   color: #111;
   transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
 }
@@ -236,7 +280,7 @@ const styles = `
   min-height: max(56px, calc(var(--u) * 50));
   padding: max(14px, calc(var(--u) * 11)) max(16px, calc(var(--u) * 10.5));
   border-radius: max(16px, calc(var(--u) * 15));
-  background: #F3EFE8;
+  background: #ffffff;
   color: #111;
   font-size: max(14px, calc(var(--u) * 9.5));
   font-weight: 500;
@@ -335,7 +379,7 @@ export default function Project() {
                   <div className="pj-panel-body">
                     <p className="pj-count">
                       <b>{item.count}</b>
-                      <span>projects done</span>
+                      <span>tahun pengerjaan</span>
                     </p>
                     <p className="pj-desc">{item.description}</p>
                     <div className="pj-cards">

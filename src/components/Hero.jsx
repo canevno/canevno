@@ -1,59 +1,61 @@
+import { useEffect, useRef } from 'react';
+
 const topLeft = 'Portofolio';
 const topRight = 'Evand';
 const bigWord = 'APRILLIANO';
 
-const description =
-  'Brand strategy, visual identity, digital campaigns, and media planning — crafted to grow your market share';
-
-const buttons = [
-  { label: 'Start your project', href: '#contact', variant: 'solid' },
-  { label: 'Start your project', href: '#project', variant: 'outline' },
-];
-
-// Tiap array = satu baris label di sisi kanan
-const labelRows = [
-  ['Clarity in positioning'],
-  ['Performance-Driven Marketing'],
-  ['Media Planning', 'Growth Systems'],
-];
-
-function ArrowUpRight() {
-  return (
-    <svg
-      className="hr-arrow"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M7 17 17 7M8 7h9v9" />
-    </svg>
-  );
-}
-
 /*
-  Skala fluid: --u = 1px di lebar sekitar 620px (ukuran referensi),
-  lalu membesar proporsional di desktop (maksimal 2.2x).
-  Setiap ukuran kecil punya batas minimum supaya tetap terbaca di HP.
+  CARA KERJA UKURAN
+  - --u   : skala fluid. 1px di lebar sekitar 620px, membesar di desktop (maksimal 2.2x).
+  - --vh  : tinggi layar yang DIBEKUKAN. Nilai awalnya svh (atau vh di browser lama), lalu komponen
+            mengisinya dengan window.innerHeight saat dimuat dan hanya memperbaruinya bila lebar
+            berubah (rotasi/resize jendela) atau tinggi berubah besar. Perubahan tinggi kecil
+            (bar alamat/toolbar browser muncul-hilang, termasuk di emulator perangkat) diabaikan,
+            sehingga judul dan foto tidak membesar-mengecil saat scroll.
+  - --cw  : lebar hero (cqw). Browser lama yang belum mengenal cqw memakai lebar layar.
+  - Judul : lebarnya = lebar hero dikurangi padding, dibatasi 140 x tinggi layar, supaya
+            di layar lebar yang pendek judul tidak terlalu besar sampai mendorong foto keluar.
+  - Foto  : kotak, selalu di tengah. Ukurannya mengikuti lebar hero, dibatasi 1,4x s/d 3,2x
+            tinggi area merah. Batas bawah menyisakan cadangan agar bagian bawah foto tidak
+            terbuka saat bar alamat HP hilang; batas atas mencegah wajah terlalu besar
+            di layar sangat lebar dan pendek. Ujung rambut selalu masuk sedikit ke judul.
 */
 const styles = `
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;500;600;700&display=swap');
 
 .hr-root {
   --u: clamp(1px, 0.115vw, 2.2px);
-  --px: clamp(20px, 4.8vw, 160px);
+  --px: clamp(20px, 6vw, 260px);
+  --vh: 1vh;
+  --cw: 100vw;
+  /* rasio tinggi/lebar viewBox judul (205 / 1160) */
+  --title-ratio: 0.1767;
+  /* jarak bawah judul ke area merah */
+  --pb: max(12px, calc(var(--u) * 24));
+
+  container-type: inline-size;
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100dvh;
-  overflow: visible;
+  height: calc(var(--vh) * 100); /* ikut --vh yang dibekukan, bukan tinggi pembungkus */
+  overflow: visible; /* foto boleh naik ke area judul */
   background: #F4F0E8;
   color: #090909;
   font-family: 'Outfit', system-ui, sans-serif;
+}
+@supports (height: 1svh) { .hr-root { --vh: 1svh; } }
+@supports (width: 1cqw) { .hr-root { --cw: 100cqw; } }
+/* foto yang lebih lebar dari layar tidak boleh memunculkan scroll horizontal */
+@supports (overflow: clip) { .hr-root { overflow-x: clip; } }
+
+/* Baris atas dan judul memakai lebar maksimum yang sama, jadi tepi kiri/kanannya selalu sejajar */
+.hr-top,
+.hr-title {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(var(--vh) * 140 + 2 * var(--px));
+  margin-inline: auto;
 }
 
 /* Baris paling atas */
@@ -69,122 +71,82 @@ const styles = `
 
 /* Tulisan besar */
 .hr-title {
-  margin: 0;
-  padding: max(10px, calc(var(--u) * 12)) var(--px) max(18px, calc(var(--u) * 40));
+  margin-block: 0;
+  padding: max(8px, calc(var(--u) * 10)) var(--px) var(--pb);
 }
 .hr-title svg { display: block; width: 100%; height: auto; overflow: visible; user-select: none; }
 
-/* Area gambar */
+/* Area merah + foto */
 .hr-media {
   position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: max(400px, calc(var(--u) * 260));
-  padding: max(18px, calc(var(--u) * 26)) var(--px) max(22px, calc(var(--u) * 28));
+  flex: 1 1 0;
+  min-height: 0;
   background: #FF0808;
   color: #fff;
-  /* buka batas atas (gambar boleh keluar ke area judul), batas bawah tetap dipotong */
+  /* lebar judul (sama dengan lebar svg judul) */
+  --tw: min(calc(var(--cw) - 2 * var(--px)), calc(var(--vh) * 140));
+  /* tinggi baris atas + tinggi judul, lalu tinggi area merah untuk layar setinggi 100svh */
+  --top-h: calc(max(14px, calc(var(--u) * 12)) + max(15px, calc(var(--u) * 16)));
+  --title-h: calc(max(8px, calc(var(--u) * 10)) + var(--tw) * var(--title-ratio) + var(--pb));
+  --hm: max(120px, calc(var(--vh) * 100 - var(--top-h) - var(--title-h)));
+  /* seberapa jauh ujung rambut masuk ke judul: jarak bawah judul + 3% lebar judul,
+     sehingga huruf tetap terbaca */
+  --ov: calc(var(--pb) + var(--tw) * 0.03);
+  /* buka batas atas (foto boleh keluar ke area judul), tepi lain tetap dipotong */
   clip-path: inset(-300vh 0 0 0);
 }
+
+/* Kepala mulai di 8,45% dari atas gambar. Posisi atas dihitung supaya ujung rambut masuk --ov ke judul. */
 .hr-img {
+  --s: clamp(calc(var(--hm) * 1.4), var(--cw), calc(var(--hm) * 3.2));
   position: absolute;
-  left: 0;
-  top: 30%;
-  transform: translateY(-30%);
-  width: 100%;
+  left: 50%;
+  top: calc(var(--s) * -0.0845 - var(--ov));
+  transform: translateX(-50%);
+  width: var(--s);
   max-width: none;
-  height: auto;
-  min-height: 100%;
-  object-fit: cover;
-  object-position: 50% 30%;
+  height: var(--s);
   pointer-events: none;
   user-select: none;
 }
+
 .hr-shade {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: linear-gradient(to top, rgba(60, 0, 0, 0.35), rgba(60, 0, 0, 0) 45%);
 }
-.hr-bottom { position: relative; z-index: 2; }
-
-/* Bawah: deskripsi, tombol, label */
-.hr-bottom {
-  margin-top: auto;
-  padding-top: 28px;
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 18px;
-}
-@media (min-width: 768px) {
-  .hr-bottom { flex-direction: row; justify-content: space-between; align-items: flex-end; }
-}
-.hr-desc {
-  margin: 0;
-  max-width: max(260px, calc(var(--u) * 230));
-  font-size: max(13px, calc(var(--u) * 9.5));
-  line-height: 1.25;
-}
-.hr-btns { display: flex; flex-wrap: wrap; gap: max(6px, calc(var(--u) * 5)); margin-top: max(12px, calc(var(--u) * 10)); }
-.hr-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: max(8px, calc(var(--u) * 6));
-  height: max(38px, calc(var(--u) * 27));
-  min-width: calc(var(--u) * 104);
-  padding: 0 max(16px, calc(var(--u) * 14));
-  border-radius: 999px;
-  font-size: max(13px, calc(var(--u) * 9.5));
-  font-weight: 500;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: opacity 0.2s;
-}
-.hr-btn:hover { opacity: 0.88; }
-.hr-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.hr-btn-solid { background: #fff; color: #FF3215; border: 1px solid #fff; }
-.hr-btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, 0.9); }
-.hr-arrow { width: max(13px, calc(var(--u) * 10)); height: max(13px, calc(var(--u) * 10)); }
-
-@media (max-width: 767px) {
-  .hr-btns {
-    display: none;
-  }
-}
-
-.hr-labels {
-  align-self: flex-end;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: max(5px, calc(var(--u) * 4));
-}
-.hr-label-row { display: flex; gap: max(5px, calc(var(--u) * 4)); }
-.hr-pill {
-  display: inline-flex;
-  align-items: center;
-  height: max(28px, calc(var(--u) * 20));
-  padding: 0 max(12px, calc(var(--u) * 10));
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  font-size: max(11px, calc(var(--u) * 6.8));
-  white-space: nowrap;
-}
-
-@media (max-width: 767px) {
-  .hr-labels {
-    display: none;
-  }
-}
 `;
 
 export default function Hero() {
+  const rootRef = useRef(null);
+
+  // Bekukan tinggi layar: abaikan perubahan tinggi kecil akibat toolbar browser.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return undefined;
+
+    let lastW = window.innerWidth;
+    let lastH = window.innerHeight;
+    const apply = () => root.style.setProperty('--vh', `${window.innerHeight / 100}px`);
+    apply();
+
+    const onResize = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w !== lastW || Math.abs(h - lastH) > Math.max(160, lastH * 0.2)) {
+        lastW = w;
+        lastH = h;
+        apply();
+      }
+    };
+
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   return (
-    <section id="home" className="hr-root">
+    <section id="home" ref={rootRef} className="hr-root">
       <style>{styles}</style>
 
       <div className="hr-top">
@@ -193,10 +155,10 @@ export default function Hero() {
       </div>
 
       <h1 className="hr-title" data-animate="hero-text">
-        <svg viewBox="0 0 1000 205" role="img" aria-label={bigWord}>
+        <svg viewBox="0 0 1160 205" role="img" aria-label={bigWord}>
           <defs>
             {/* gradasi horizontal: huruf bergantian merah tua dan oranye-merah */}
-            <linearGradient id="hr-h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="0">
+            <linearGradient id="hr-h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1160" y2="0">
               <stop offset="0" stopColor="#4A0908" />
               <stop offset="0.07" stopColor="#850D08" />
               <stop offset="0.12" stopColor="#FF3215" />
@@ -227,8 +189,8 @@ export default function Hero() {
           <text
             x="0"
             y="203"
-            fontSize="235"
-            textLength="1000"
+            fontSize="245"
+            textLength="1160"
             lengthAdjust="spacingAndGlyphs"
             fill="url(#hr-h)"
             fontFamily="'Anton', 'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
@@ -239,8 +201,8 @@ export default function Hero() {
             aria-hidden="true"
             x="0"
             y="203"
-            fontSize="235"
-            textLength="1000"
+            fontSize="245"
+            textLength="1160"
             lengthAdjust="spacingAndGlyphs"
             fill="url(#hr-v)"
             fontFamily="'Anton', 'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
@@ -260,36 +222,6 @@ export default function Hero() {
           fetchPriority="high"
         />
         <div className="hr-shade" aria-hidden="true" />
-
-        <div className="hr-bottom">
-          <div>
-            <p className="hr-desc">{description}</p>
-            <div className="hr-btns">
-              {buttons.map((b, i) => (
-                <a
-                  key={i}
-                  href={b.href}
-                  className={`hr-btn ${b.variant === 'solid' ? 'hr-btn-solid' : 'hr-btn-outline'}`}
-                >
-                  {b.label}
-                  <ArrowUpRight />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="hr-labels">
-            {labelRows.map((row, i) => (
-              <div key={i} className="hr-label-row">
-                {row.map((text) => (
-                  <span key={text} className="hr-pill">
-                    {text}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
