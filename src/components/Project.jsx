@@ -13,90 +13,68 @@ const buttonLabel = 'Lihat langsung';
 const services = [
   {
     number: '01',
-    category: 'Web Keuangan',
-    title: 'KengQud',
-    href: '#contact',
-    image: '/image/projects/kengqud.webp',
+    category: 'Design Dashboard Helath ',
+    title: 'Dashboard Health Care',
+    href: 'https://www.figma.com/design/FFd9CaE006xybCP9YcGqWD/Healt-Care---Evand-Aprilliano?node-id=19-168&t=CQItXXa4WLiRSg2M-1#contact',
+    image: '/image/Helath.png',
     count: '2025',
     description:
-      'Website untuk membantu pengguna menghitung keuangan harian, lengkap dengan pengingat kebutuhan dan perhitungan diagram pengeluaran.',
-    tags: ['Kalkulasi Keuangan', 'Pengingat Kebutuhan', 'Diagram Pengeluaran'],
+      'Website Health Care Design',
+    tags: ['Figma'],
   },
   {
     number: '02',
-    category: 'Web CRUD',
-    title: 'Pengembangan CRUD',
-    href: '#contact',
-    image: '/image/projects/crud.webp',
+    category: 'Design Website',
+    title: 'Website Wisata',
+    href: 'https://www.figma.com/design/VueznlciDhygYUcwovqdej/Evand-Aprilliano---11--?node-id=0-1&t=06bFPK5HyWFgrPdN-1',
+    image: '/image/dashboard.png',
     count: '2025',
     description:
-      'Website CRUD yang mengandalkan Laravel dan Livewire, bertujuan membangun sistem berbasis CRUD.',
-    tags: ['Laravel', 'Livewire', 'Sistem CRUD'],
+      'Design web pemesanan wisata',
+    tags: ['Figma'],
   },
   {
     number: '03',
-    category: 'E-Commerce Baju Batik Nusantara',
-    title: 'JavaVidpa',
-    href: '#contact',
-    image: '/image/projects/javavidpa.webp',
-    count: '2025',
-    description:
-      'Website e-commerce dengan cara beli yang sederhana bagi pengguna, tampilan yang interaktif, dan diskon bulanan yang besar.',
-    tags: ['PHP', 'Tailwind CSS', 'Alpine.js'],
-  },
-  {
-    number: '04',
-    category: 'Website Portofolio',
-    title: 'Portofolio (Vercel.app)',
-    href: '#contact',
-    image: '/image/projects/portofolio.webp',
-    count: '2025',
-    description:
-      'Website portofolio pertama saya yang dibuat menggunakan HTML, CSS, dan JavaScript.',
-    tags: ['HTML', 'CSS', 'JavaScript'],
-  },
-  {
-    number: '05',
     category: 'Web Penjualan Sepatu',
     title: 'Zorieshoes',
     href: '#contact',
-    image: '/image/projects/zorieshoes.webp',
+    image: '/image/zorie.jpeg',
     count: '2026',
     description:
       'Website penjualan sepatu yang digunakan sebagai tugas akhir XI PPLG, dibuat dengan Laravel, PHP, Tailwind CSS, Alpine.js, dan Livewire.',
     tags: ['Laravel', 'PHP', 'Tailwind CSS'],
   },
   {
-    number: '06',
+    number: '04',
     category: 'Website Pramuka',
     title: 'Pramuka SMK Negeri 1 Bangsri',
-    href: '#contact',
-    image: '/image/projects/pramuka.webp',
+    href: 'https://pramuka.smkn1bangsri.sch.id/',
+    image: '/image/pramuka.png',
     count: '2026',
     description:
       'Website untuk menampilkan prestasi dan kegiatan Pramuka KH. Acmad Fauzan & Dewi Sartika, dirancang oleh 2 orang dengan Framer Motion, Alpine.js, Next.js, Laravel, dan PHP.',
     tags: ['Next.js', 'Laravel', 'Framer Motion'],
   },
   {
-    number: '07',
-    category: 'Sistem Pemesanan Barang',
-    title: 'Simpesan',
-    href: '#contact',
-    image: '/image/projects/simpesan.webp',
+    number: '05',
+    category: 'Design Benner',
+    title: 'Design Gapura',
+    href: 'https://www.figma.com/design/LAQrlrLFmrpZwWEYVp1Cz1/Untitled?node-id=102-131&t=06bFPK5HyWFgrPdN-1',
+    image: '/image/Frame 5.png',
     count: '2026',
     description:
-      'Halaman aplikasi mobile sederhana untuk pemesanan barang, dibuat dengan Flutter dan Dart menggunakan sistem CRUD.',
-    tags: ['Flutter', 'Dart', 'Sistem CRUD'],
+      'Design Banner Desnatalis smkn 1 bangsri tahun 2026',
+    tags: ['Figma, Banner Design'],
   },
   {
-    number: '08',
+    number: '06',
     category: 'Desain',
-    title: 'Web & App Design',
-    href: '#contact',
-    image: '/image/projects/web-app-design.webp',
-    count: '2026',
+    title: 'Dashboard Admin Design',
+    href: 'https://www.figma.com/design/EweqPIsQ0ZZXDPTdxsx1lz/Dashboard-UI---UX?node-id=2-4&t=06bFPK5HyWFgrPdN-1',
+    image: '/image/Frame 1.jpg',
+    count: '2025',
     description:
-      'Desain website Pramuka SMKN 1 Bangsri yang lengkap dengan dashboard admin yang dinamis, elegan, dan minimalis.',
+      'Desain Dashboard keuangan yang lengkap dengan dashboard admin yang dinamis, elegan, dan minimalis.',
     tags: ['Dashboard Admin', 'Dinamis', 'Elegan & Minimalis'],
   },
 ];
@@ -240,6 +218,8 @@ const styles = `
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--dur) var(--ease);
 }
+.pj-row:hover .pj-media,
+.pj-row:focus-within .pj-media,
 .pj-row[data-open='true'] .pj-media { grid-template-rows: 1fr; }
 .pj-media-clip { min-height: 0; overflow: hidden; }
 .pj-photo {
@@ -252,6 +232,8 @@ const styles = `
   opacity: 0;
   transition: opacity 0.4s var(--ease);
 }
+.pj-row:hover .pj-photo,
+.pj-row:focus-within .pj-photo,
 .pj-row[data-open='true'] .pj-photo { opacity: 1; transition-delay: 0.12s; }
 .pj-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
@@ -262,8 +244,12 @@ const styles = `
   grid-template-rows: 0fr;
   transition: grid-template-rows var(--dur) var(--ease);
 }
+.pj-row:hover .pj-panel,
+.pj-row:focus-within .pj-panel,
 .pj-row[data-open='true'] .pj-panel { grid-template-rows: 1fr; }
 .pj-panel-clip { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s linear var(--dur); }
+.pj-row:hover .pj-panel-clip,
+.pj-row:focus-within .pj-panel-clip,
 .pj-row[data-open='true'] .pj-panel-clip { visibility: visible; transition-delay: 0s; }
 .pj-panel-body {
   display: flex;
@@ -274,6 +260,8 @@ const styles = `
   transform: translateY(10px);
   transition: opacity 0.35s var(--ease), transform 0.5s var(--ease);
 }
+.pj-row:hover .pj-panel-body,
+.pj-row:focus-within .pj-panel-body,
 .pj-row[data-open='true'] .pj-panel-body { opacity: 1; transform: none; transition-delay: 0.14s; }
 
 .pj-count { margin: 0; display: flex; align-items: baseline; gap: max(8px, calc(var(--u) * 6)); }
@@ -342,7 +330,10 @@ export default function Project() {
               key={item.number}
               className="pj-row"
               data-open={open}
+              onPointerEnter={() => canHover() && setActive(i)}
+              onPointerLeave={() => canHover() && setActive(null)}
               onMouseEnter={() => canHover() && setActive(i)}
+              onMouseLeave={() => canHover() && setActive(null)}
               onFocus={() => setActive(i)}
               onBlur={(e) => {
                 if (!e.currentTarget.contains(e.relatedTarget)) setActive(null);
@@ -358,17 +349,19 @@ export default function Project() {
                 <h3 className="pj-name">{item.title}</h3>
               </div>
 
-              <div className="pj-action">
-                <a
-                  href={item.href}
-                  className="pj-btn"
-                  target={external ? '_blank' : undefined}
-                  rel={external ? 'noreferrer' : undefined}
-                >
-                  {buttonLabel}
-                  <ArrowUpRight />
-                </a>
-              </div>
+              {item.number !== '03' && (
+                <div className="pj-action">
+                  <a
+                    href={item.href}
+                    className="pj-btn"
+                    target={external ? '_blank' : undefined}
+                    rel={external ? 'noreferrer' : undefined}
+                  >
+                    {buttonLabel}
+                    <ArrowUpRight />
+                  </a>
+                </div>
+              )}
 
               <div className="pj-media" aria-hidden="true">
                 <div className="pj-media-clip">
