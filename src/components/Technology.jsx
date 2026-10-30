@@ -96,14 +96,6 @@ const technologies = [
     icon: `${DEVICON}/dart/dart-original.svg`,
     fallback: `${SIMPLE}/dart/0175C2`,
   },
-  {
-    name: 'Framer Motion',
-    category: 'Animation',
-    description: 'Membuat animasi antarmuka yang halus pada website.',
-    // Devicon tidak punya logo Framer Motion, jadi langsung memakai Simple Icons.
-    icon: `${SIMPLE}/framer/0055FF`,
-    fallback: null,
-  },
 ];
 
 // Jika gambar gagal dimuat: coba cadangan, lalu tampilkan monogram.

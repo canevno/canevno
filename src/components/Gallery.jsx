@@ -12,13 +12,22 @@ const portraitVideo = ''; // sementara kosong = pakai gambar. Nanti isi: '/video
 
 // Gambar portfolio yang muncul di jalur kursor (ratio = lebar / tinggi)
 const works = [
-  { src: '/image/gallery/wedding.webp', ratio: 4 / 3 },
-  { src: '/image/gallery/portfolio.webp', ratio: 4 / 3 },
-  { src: '/image/gallery/travel.webp', ratio: 4 / 3 },
-  { src: '/image/gallery/landing-product.webp', ratio: 16 / 10 },
-  { src: '/image/gallery/editorial.webp', ratio: 16 / 10 },
-  { src: '/image/gallery/fashion.webp', ratio: 16 / 10 },
-  { src: '/image/gallery/branding.webp', ratio: 16 / 10 },
+  { src: '/image/gallery/1.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/2.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/3.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/4.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/5.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/6.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/7.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/8.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/9.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/10.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/11.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/12.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/13.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/14.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/15.jpeg', ratio: 4 / 3 },
+  { src: '/image/gallery/16.jpeg', ratio: 4 / 3 },
 ];
 
 const POOL_SIZE = 16; // elemen yang dipakai ulang (tidak ada elemen baru tanpa batas)
