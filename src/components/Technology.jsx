@@ -283,14 +283,6 @@ export default function Kemampuan() {
             </li>
           ))}
         </ul>
-
-        {/* PENUTUP */}
-        <p
-          data-tech-foot
-          className="mt-14 text-base font-medium text-[#111111] md:mt-20 md:text-lg"
-        >
-          Terus belajar. Terus membangun.
-        </p>
       </div>
     </section>
   );

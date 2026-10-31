@@ -28,7 +28,7 @@ const columns = [
   {
     title: 'Social Links',
     links: [
-      { label: 'Instagram', href: 'https://instagram.com/evandaprilliano' },
+      { label: 'Instagram', href: 'https://www.instagram.com/vndprilln' },
       { label: 'Facebook', href: 'https://facebook.com' },
       { label: 'GitHub', href: 'https://github.com/canevno' },
       { label: 'LinkedIn', href: 'https://linkedin.com' },
