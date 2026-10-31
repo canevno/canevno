@@ -31,7 +31,7 @@ const works = [
 ];
 
 const POOL_SIZE = 16; // elemen yang dipakai ulang (tidak ada elemen baru tanpa batas)
-const MAX_ACTIVE = 8; // jumlah gambar aktif sekaligus (6-10)
+const MAX_ACTIVE = 16; // jumlah gambar aktif sekaligus (6-10)
 const FADE_MS = 900; // durasi memudar sampai hilang (0,8-1 detik)
 const EVICT_MS = 450; // durasi menghilang untuk gambar tertua saat batas tercapai
 const APPEAR_MS = 500; // durasi muncul (0,5 detik), setelah itu gambar langsung memudar
